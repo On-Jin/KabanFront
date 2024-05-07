@@ -1,0 +1,12 @@
+﻿services:
+  kaban-front:
+    container_name: kaban-front
+    image: kaban-front:latest
+    restart: always
+    ports:
+      - 3000:3000
+
+networks:
+  default:
+    external: true
+    name: nginxproxymanager_default
