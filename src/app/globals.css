@@ -15,7 +15,7 @@
     .heading-m {
         @apply text-[0.9375rem] font-bold;
     }
-    
+
     .heading-s {
         @apply text-[0.75rem] tracking-[0.15rem] font-bold;
     }
@@ -23,7 +23,7 @@
     .body-l {
         @apply text-[0.8125rem] leading-[1.4375rem] font-medium;
     }
-    
+
     .body-m {
         @apply text-[0.75rem] font-bold;
     }

@@ -4,7 +4,8 @@ import iconChevronDown from "/public/icon-chevron-down.svg";
 import iconChevronUp from "/public/icon-chevron-up.svg";
 import {useState} from "react";
 
-export default function KDropDown({value, options, onChange}: {
+export default function KDropDown({className, value, options, onChange}: {
+    className?: string,
     value: string,
     options: string[],
     onChange: (newValue: string) => void
@@ -16,7 +17,7 @@ export default function KDropDown({value, options, onChange}: {
         return (
             <div
                 key={o}
-                className="cursor-pointer p-2 px-4 bg-k-transparent hover:bg-k-medium-grey hover:bg-opacity-5"
+                className={"cursor-pointer p-2 px-4 bg-k-transparent hover:bg-k-medium-grey hover:bg-opacity-5 "}
                 onClick={() => {
                     onChange(o);
                     setIsOpen(false)
@@ -27,7 +28,7 @@ export default function KDropDown({value, options, onChange}: {
         );
     });
     return (
-        <div className="relative body-l">
+        <div className={"relative body-l " + className}>
             <div
                 className={"cursor-pointer select-none px-4 py-2 rounded border-[1px] border-solid border-k-medium-grey w-full text-k-black dark:text-white focus:outline-none appearance-none" +
                     (isOpen ? " border-k-purple" : " hover:bg-k-medium-grey hover:bg-opacity-5 border-opacity-25")}

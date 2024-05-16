@@ -1,6 +1,8 @@
 import type {Metadata} from "next";
 import {Plus_Jakarta_Sans} from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
+import NavBar from "@/shared/NavBar";
+
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
 
@@ -16,7 +18,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className + " bg-k-light-grey"}>
+            <NavBar/>
+            <main>
+                {children}
+            </main>
+        </body>
         </html>
     );
 }
