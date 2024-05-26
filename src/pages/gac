@@ -1,0 +1,71 @@
+﻿// // import createApolloClient from "@/lib/ApolloClient";
+// import {gql} from "@apollo/client";
+// import {GetServerSideProps, InferGetServerSidePropsType} from "next";
+// import {AppProps} from "next/app";
+//
+// import {ApolloClient, createHttpLink, InMemoryCache} from "@apollo/client";
+// import {setContext} from "@apollo/client/link/context";
+// import {cookies} from "next/headers";
+//
+// const httpLink = createHttpLink({
+//     uri: "/graphql",
+// });
+//
+// const authLink = setContext((_, { headers }) => {
+//     const token = cookies().get(".AspNetCore.Cookies");
+//     console.log(token);
+//     console.log("_____");
+//     console.log(headers);
+//     return {
+//         headers: {
+//             ...headers,
+//             // authorization: token ? `Bearer ${token}` : "",
+//         },
+//     };
+// });
+//
+// const createApolloClient = () => {
+//     return new ApolloClient({
+//         uri: "http://localhost:5264",
+//         cache: new InMemoryCache(),
+//         link: authLink.concat(httpLink),
+//     });
+// };
+//
+// type Countries = {
+//     countries: any
+// }
+//
+// export const getServerSideProps = (async (context) => {
+//     const client = createApolloClient();
+//     const {data} = await client.query({
+//         query: gql`
+//       query Q {
+//           me {
+//             discordAvatarUrl
+//             discordUsername
+//             id
+//           }
+//         }
+//     `,
+//     });
+//
+//     return {
+//         props: {
+//             countries: data.countries.slice(0, 4),
+//         },
+//     };
+// }) satisfies GetServerSideProps<{ countries: Countries }>
+//
+// export default function Home({countries}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+//     return <div className="">
+//         {countries.map((country: any) => (
+//             <div key={country.code} className="">
+//                 <h3>{country.name}</h3>
+//                 <p>
+//                     {country.code} - {country.emoji}
+//                 </p>
+//             </div>
+//         ))}
+//     </div>;
+// }

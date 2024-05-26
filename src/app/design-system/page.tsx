@@ -148,9 +148,9 @@ function generateTitle(title: string, index: number) {
 }
 
 enum LocalTaskState {
-    Todo = "Doing",
+    Todo = "Todo",
     Doing = "Doing",
-    Done = "Doing",
+    Done = "Done",
 }
 
 export default function DesignSystem() {

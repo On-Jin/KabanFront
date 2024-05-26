@@ -1,4 +1,4 @@
-﻿'use client';
+﻿// 'use client';
 import KDropDown from "@/components/KDropDown";
 
 import Image from "next/image";
@@ -6,12 +6,23 @@ import logoMobile from '/public/logo-mobile.svg';
 import iconChevronDown from "/public/icon-chevron-down.svg";
 import iconVerticalEllipsis from '/public/icon-vertical-ellipsis.svg';
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
-// import iconChevronDown from '/public/icon-chevron-down.svg';
+import {useData} from "@/context/DataContext";
 
 export default function NavBar() {
+    const {data} = useData();
+    let avartar = <></>;
+    if (data.discordAvatarUrl != undefined) {
+        avartar = (
+            <img
+                className="h-6 w-6 rounded-full"
+                src={data.discordAvatarUrl}
+            />
+        )
+    }
+
     return (
         <menu className="flex justify-between px-4 py-4
-                        bg-white dark:bg-k-dark-grey dark:text-white">
+                        bg-white text-k-dark-grey dark:bg-k-dark-grey dark:text-white">
             <div className="flex space-x-4">
                 <li className="my-auto">
                     <Image
@@ -35,6 +46,7 @@ export default function NavBar() {
                 </li>
             </div>
             <div className="flex space-x-4 justify-items-center items-center ">
+                <li>{avartar}</li>
                 <li>
                     <button className="bg-k-purple w-12 h-8 flex items-center justify-center rounded-3xl opacity-25">
                         <Image
