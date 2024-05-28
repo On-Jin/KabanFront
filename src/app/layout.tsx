@@ -3,7 +3,7 @@ import {Plus_Jakarta_Sans} from "next/font/google";
 import "@/app/globals.css";
 import {DataProvider, useData} from "@/context/DataContext";
 
-import LoadingProvider from "@/shared/LoadingProvider";
+import WaitMe from "@/shared/WaitMe";
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
 
@@ -21,10 +21,12 @@ export default function RootLayout({
 
     return (
         <html lang="en">
-        <body className={inter.className + " bg-k-light-grey"}>
-        <DataProvider>
-                <LoadingProvider>{children}</LoadingProvider>
-        </DataProvider>
+        <body className={inter.className + " bg-k-light-grey text-k-black dark:bg-k-dark-grey dark:text-white"}>
+        <div className="">
+            <DataProvider>
+                <WaitMe>{children}</WaitMe>
+            </DataProvider>
+        </div>
         </body>
         </html>
     );

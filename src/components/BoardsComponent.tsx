@@ -4,7 +4,7 @@ import {useQuery, gql, useSuspenseQuery, TypedDocumentNode} from "@apollo/client
 import {Board} from "@/lib/types/Board";
 import ColumnComponent from "@/components/ColumnComponent";
 import BoardComponent from "@/components/BoardComponent";
-import {useEffect, useState} from "react";
+import {Suspense, useEffect, useState} from "react";
 
 interface Data {
     boards: Board[];
@@ -51,10 +51,6 @@ query q {
   }
 }
 `
-type BoardComponentProps = {
-    board: Board;
-    updateBoard: (updatedBoard: Board) => void;
-};
 export default function BoardsComponent() {
     const {data} = useSuspenseQuery(GET_BOARDS_QUERY, {
         // variables: {id: "1"},
@@ -64,6 +60,8 @@ export default function BoardsComponent() {
 
     useEffect(() => {
         if (data) {
+            console.log("##########################S")
+            console.log(data.boards)
             setBoards(data.boards);
         }
     }, [data]);
@@ -79,14 +77,19 @@ export default function BoardsComponent() {
 
 
     return (
-        <div className="touch-manipulation">
-            Boards <br/>
-            {boards.map((board) => (<div key={board.id}>{board.name}</div>))}
-            <div>
-                <div>
-                    {boards.map(b => <BoardComponent key={b.id} board={b} updateBoard={updateBoard}/>)}
-                </div>
-            </div>
+        <div className="touch-manipulation w-full grow flex flex-col
+                        ">
+            <Suspense fallback={<div>Loading...</div>}>
+                {boards.length > 0 && <BoardComponent key={boards[0].id} board={boards[0]} updateBoard={updateBoard}/>}
+            </Suspense>
+
+
+            {/*{boards.map((board) => (<div key={board.id}>{board.name}</div>))}*/}
+            {/*<div className="flex">*/}
+            {/*    <div>*/}
+            {/*        {boards.map(b => <BoardComponent key={b.id} board={b} updateBoard={updateBoard}/>)}*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 }

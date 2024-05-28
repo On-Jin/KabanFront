@@ -11,7 +11,7 @@ import {
     useSensors
 } from "@dnd-kit/core";
 import type {DragEndEvent} from "@dnd-kit/core/dist/types";
-import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {horizontalListSortingStrategy, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {Column} from "@/lib/types/Column";
 import {useContext, useState} from "react";
 import {DND_BOARD_PREFIX, DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
@@ -31,12 +31,6 @@ export default function BoardComponent({board, updateBoard}: {
         useSensor(MouseSensor),
         useSensor(TouchSensor)
     );
-    
-    const handleUpdate = () => {
-        // Simulate an update to the board
-        const updatedBoard: Board = {...board, name: board.name + ' updated 4x'};
-        updateBoard(updatedBoard);
-    };
 
     function handleDragStart({active}: DragEndEvent) {
         console.log("handleDragStart");
@@ -226,28 +220,26 @@ export default function BoardComponent({board, updateBoard}: {
     }
 
     return (
-        <div>
-            <div>{board.name}</div>
-            <button onClick={handleUpdate}>Update Board</button>
-            <div>
-                <DndContext
-                    sensors={sensors}
-                    // collisionDetection={closestCorners}
-                    onDragStart={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragEnd={handleDragEnd}
-                >
-                    <SortableContext
-                        items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
-                        strategy={verticalListSortingStrategy}
-                    >
+        <div className="flex flex-col grow">
+            <DndContext
+                sensors={sensors}
+                // collisionDetection={closestCorners}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+            >
+                <div className="overflow-auto w-full h-full grow">
+                    <div className="flex space-x-6 px-4 h-full">
+                        <SortableContext
+                            items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
+                            strategy={horizontalListSortingStrategy}
+                        >
+                            {board.columns.map(c => <ColumnComponent key={c.id} column={c}/>)}
+                        </SortableContext>
+                    </div>
+                </div>
 
-                        {board.columns.map(c => <ColumnComponent key={c.id} column={c}/>)}
-                    </SortableContext>
-
-
-                </DndContext>
-            </div>
+            </DndContext>
         </div>
     );
 }

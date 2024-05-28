@@ -5,19 +5,19 @@
 
 @layer components {
     .heading-xl {
-        @apply text-[1.5rem] font-bold;
+        @apply text-[1.5rem] leading-[1.875rem] font-bold;
     }
 
     .heading-l {
-        @apply text-[1.125rem] font-bold;
+        @apply text-[1.125rem] leading-[1.4375rem] font-bold;
     }
 
     .heading-m {
-        @apply text-[0.9375rem] font-bold;
+        @apply text-[0.9375rem] leading-[1.1875rem] font-bold;
     }
 
     .heading-s {
-        @apply text-[0.75rem] tracking-[0.15rem] font-bold;
+        @apply text-[0.75rem] tracking-[0.15rem] leading-[0.9375rem] font-bold;
     }
 
     .body-l {
@@ -25,6 +25,6 @@
     }
 
     .body-m {
-        @apply text-[0.75rem] font-bold;
+        @apply text-[0.75rem] font-bold leading-[0.9375rem];
     }
 }
