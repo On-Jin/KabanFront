@@ -21,7 +21,7 @@ export default function MainTaskComponent({mainTask}: { mainTask: MainTask; }) {
 
     return (
         <>
-            <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <div className="touch-manipulation" ref={setNodeRef} style={style} {...attributes} {...listeners}>
                 {mainTask.title}
             </div>
         </>

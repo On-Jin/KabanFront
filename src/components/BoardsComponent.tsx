@@ -79,7 +79,7 @@ export default function BoardsComponent() {
 
 
     return (
-        <div>
+        <div className="touch-manipulation">
             Boards <br/>
             {boards.map((board) => (<div key={board.id}>{board.name}</div>))}
             <div>

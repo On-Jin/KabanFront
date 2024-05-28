@@ -78,7 +78,7 @@ export default function ColumnComponent({column}: { column: Column }) {
 
     return (
         <>
-            <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <div className="touch-manipulation" ref={setNodeRef} style={style} {...attributes} {...listeners}>
 
                 <div>
                     <div>{column.name}</div>

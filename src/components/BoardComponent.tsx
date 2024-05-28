@@ -1,7 +1,15 @@
 ﻿import {Board} from "@/lib/types/Board";
 import MainTaskComponent from "@/components/MainTaskComponent";
 import ColumnComponent from "@/components/ColumnComponent";
-import {DndContext, DragOverEvent, UniqueIdentifier} from "@dnd-kit/core";
+import {
+    DndContext,
+    DragOverEvent,
+    KeyboardSensor,
+    MouseSensor,
+    TouchSensor,
+    UniqueIdentifier, useSensor,
+    useSensors
+} from "@dnd-kit/core";
 import type {DragEndEvent} from "@dnd-kit/core/dist/types";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {Column} from "@/lib/types/Column";
@@ -19,6 +27,11 @@ export default function BoardComponent({board, updateBoard}: {
 }) {
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
+    const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(TouchSensor)
+    );
+    
     const handleUpdate = () => {
         // Simulate an update to the board
         const updatedBoard: Board = {...board, name: board.name + ' updated 4x'};
@@ -100,18 +113,6 @@ export default function BoardComponent({board, updateBoard}: {
             newIndex =
                 overIndex >= 0 ? overIndex + modifier : overColumn.mainTasks.length + 1;
         }
-
-        // recentlyMovedToNewContainer.current = true;
-        // var newOverColumnMainTasks = [
-        //     ...overColumn.mainTasks.slice(0, newIndex),
-        //     activeColumn.mainTasks[activeIndex],
-        //     ...overColumn.mainTasks.slice(
-        //         newIndex,
-        //         overColumn.mainTasks.length
-        //     ),
-        // ];
-        //
-        // overColumn.mainTasks = newOverColumnMainTasks;
 
         const activeColumnIndex = board.columns.indexOf(activeColumn);
         const overColumnIndex = board.columns.indexOf(overColumn);
@@ -230,7 +231,7 @@ export default function BoardComponent({board, updateBoard}: {
             <button onClick={handleUpdate}>Update Board</button>
             <div>
                 <DndContext
-                    // sensors={sensors}
+                    sensors={sensors}
                     // collisionDetection={closestCorners}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
