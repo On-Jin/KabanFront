@@ -1,7 +1,7 @@
 ﻿import {Column} from "@/lib/types/Column";
 
 export interface Board {
-    "id": string;
+    "id": number;
     "name": string;
     "columns": Column[]
 }

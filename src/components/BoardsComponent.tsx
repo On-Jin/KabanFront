@@ -4,6 +4,7 @@ import {useQuery, gql, useSuspenseQuery, TypedDocumentNode} from "@apollo/client
 import {Board} from "@/lib/types/Board";
 import ColumnComponent from "@/components/ColumnComponent";
 import BoardComponent from "@/components/BoardComponent";
+import {useEffect, useState} from "react";
 
 interface Data {
     boards: Board[];
@@ -50,21 +51,40 @@ query q {
   }
 }
 `
-
+type BoardComponentProps = {
+    board: Board;
+    updateBoard: (updatedBoard: Board) => void;
+};
 export default function BoardsComponent() {
     const {data} = useSuspenseQuery(GET_BOARDS_QUERY, {
         // variables: {id: "1"},
     });
-    const dat = data?.boards;
-    const b = data.boards[0];
+
+    const [boards, setBoards] = useState<Board[]>([]);
+
+    useEffect(() => {
+        if (data) {
+            setBoards(data.boards);
+        }
+    }, [data]);
+
+    const updateBoard = (updatedBoard: Board) => {
+        console.log("updateBoard")
+        setBoards(prevBoards => {
+            const newBoards = prevBoards.map(board => (board.id === updatedBoard.id ? updatedBoard : board));
+            console.log('Updated boards:', newBoards);
+            return newBoards;
+        });
+    };
+
 
     return (
         <div>
             Boards <br/>
-            {data.boards.map((board) => (<div key={board.id}>{board.name}</div>))}
+            {boards.map((board) => (<div key={board.id}>{board.name}</div>))}
             <div>
                 <div>
-                    {data?.boards.map(b => <BoardComponent key={b.id} board={b}/>)}
+                    {boards.map(b => <BoardComponent key={b.id} board={b} updateBoard={updateBoard}/>)}
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
+import {BoardsProvider} from "@/context/BoardsContext";
 
 interface DataContextType {
     data: any;
@@ -41,7 +42,9 @@ export const DataProvider = ({children, initialData = null}: DataProviderProps) 
         <ApolloProvider client={client}>
 
             <DataContext.Provider value={{data, loading}}>
+                {/*<BoardsProvider>*/}
                 {children}
+                {/*</BoardsProvider>*/}
             </DataContext.Provider>
         </ApolloProvider>
 
