@@ -4,6 +4,7 @@ import {ApolloClient, createHttpLink, gql, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
 import {cookies} from "next/headers";
 import BoardsComponent from "@/components/BoardsComponent";
+import KBoard from "@/components/tests/KBoard";
 
 const httpLink = createHttpLink({
     uri: "http://localhost:5264/graphql",
@@ -45,6 +46,7 @@ export default async function Home() {
         <>
             <SwitchTheme/>
             <BoardsComponent/>
+            {/*<KBoard/>*/}
             {/*<div className=" text-k-black">*/}
             {/*    {JSON.stringify(data)}*/}
             {/*</div>*/}

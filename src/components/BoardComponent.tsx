@@ -1,10 +1,9 @@
-﻿import {Board} from "@/lib/types/Board";
-import MainTaskComponent from "@/components/MainTaskComponent";
+﻿'use client'
+import {Board} from "@/lib/types/Board";
 import ColumnComponent from "@/components/ColumnComponent";
 import {
     DndContext,
     DragOverEvent,
-    KeyboardSensor,
     MouseSensor,
     TouchSensor,
     UniqueIdentifier, useSensor,
@@ -13,12 +12,8 @@ import {
 import type {DragEndEvent} from "@dnd-kit/core/dist/types";
 import {horizontalListSortingStrategy, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {Column} from "@/lib/types/Column";
-import {useContext, useState} from "react";
-import {DND_BOARD_PREFIX, DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
-import {MainTask} from "@/lib/types/MainTask";
-import {
-    ReactServerDOMTurbopackServerNode
-} from "next/dist/server/future/route-modules/app-page/vendored/rsc/entrypoints";
+import {useState} from "react";
+import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import {arrayMove} from "@/lib/Utils";
 
 export default function BoardComponent({board, updateBoard}: {
@@ -57,14 +52,6 @@ export default function BoardComponent({board, updateBoard}: {
         return board.columns.find(c => c.id === idToCheck);
     }
 
-    function getMainTaskWithDndId(id: string): MainTask | undefined {
-        if (!id.startsWith(DND_MAINTASK_PREFIX))
-            return undefined;
-        const idToCheck = parseInt(id.substring(DND_MAINTASK_PREFIX.length));
-        return board.columns.flatMap(column => column.mainTasks)
-            .find(mainTask => mainTask.id === idToCheck);
-    }
-
 
     function handleDragOver({active, over}: DragOverEvent) {
         const overDndId = over?.id.toString();
@@ -96,22 +83,23 @@ export default function BoardComponent({board, updateBoard}: {
         if (overIndex != -1) {
             newIndex = overColumn.mainTasks.length + 1;
         } else {
-            const isBelowOverItem =
-                over &&
-                active.rect.current.translated &&
-                active.rect.current.translated.top >
-                over.rect.top + over.rect.height;
-
-            const modifier = isBelowOverItem ? 1 : 0;
-
-            newIndex =
-                overIndex >= 0 ? overIndex + modifier : overColumn.mainTasks.length + 1;
+            // const isBelowOverItem =
+            //     over &&
+            //     active.rect.current.translated &&
+            //     active.rect.current.translated.top >
+            //     over.rect.top + over.rect.height;
+            //
+            // const modifier = isBelowOverItem ? 1 : 0;
+            //
+            // newIndex =
+            //     overIndex >= 0 ? overIndex + modifier : overColumn.mainTasks.length + 1;
+            newIndex = overColumn.mainTasks.length + 1;
         }
 
         const activeColumnIndex = board.columns.indexOf(activeColumn);
         const overColumnIndex = board.columns.indexOf(overColumn);
 
-        const nB = {
+        const newBoard = {
             ...board,
             columns: board.columns.map((column, index) => {
                     if (index === activeColumnIndex)
@@ -134,10 +122,7 @@ export default function BoardComponent({board, updateBoard}: {
             ),
         };
 
-
-        // activeColumn.mainTasks.filter(m => m.id !== activeId)
-
-        updateBoard(nB);
+        updateBoard(newBoard);
     }
 
     function handleDragEnd({active, over}: DragEndEvent) {
@@ -154,11 +139,11 @@ export default function BoardComponent({board, updateBoard}: {
             const activeIndex = board.columns.findIndex(m => m.id == activeId);
             const overIndex = board.columns.findIndex(m => m.id == overId);
 
-            const nB = {
+            const newBoard = {
                 ...board,
                 columns: arrayMove(board.columns, activeIndex, overIndex)
             };
-            updateBoard(nB);
+            updateBoard(newBoard);
         } else {
             const activeColumn = getColumnWithMainTaskDndId(activeDndId);
 
@@ -185,18 +170,9 @@ export default function BoardComponent({board, updateBoard}: {
             const overIndex = overColumn.mainTasks.findIndex(m => m.id == overId);
 
             if (activeIndex !== overIndex) {
-                // setItems((items) => ({
-                //     ...items,
-                //     [overContainer]: arrayMove(
-                //         items[overContainer],
-                //         activeIndex,
-                //         overIndex
-                //     ),
-                // }));
-
                 const overColumnIndex = board.columns.indexOf(overColumn);
 
-                const nB = {
+                const newBoard = {
                     ...board,
                     columns: board.columns.map((column, index) => {
                             if (index === overColumnIndex) {
@@ -213,7 +189,7 @@ export default function BoardComponent({board, updateBoard}: {
                         }
                     ),
                 };
-                updateBoard(nB);
+                updateBoard(newBoard);
             }
         }
         setActiveId(null);
@@ -234,7 +210,8 @@ export default function BoardComponent({board, updateBoard}: {
                             items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
                             strategy={horizontalListSortingStrategy}
                         >
-                            {board.columns.map(c => <ColumnComponent key={c.id} column={c}/>)}
+                            {board.columns.map(c => <ColumnComponent key={c.id} column={c}
+                                                                     mainTaskListIds={c.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}/>)}
                         </SortableContext>
                     </div>
                 </div>

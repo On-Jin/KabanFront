@@ -2,7 +2,6 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
-import {BoardsProvider} from "@/context/BoardsContext";
 
 interface DataContextType {
     data: any;

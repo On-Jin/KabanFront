@@ -1,49 +1,20 @@
 ﻿'use client'
 import {Column} from "@/lib/types/Column";
 import MainTaskComponent from "@/components/MainTaskComponent";
-import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
-import {Result} from "postcss";
-import {useSortable} from "@dnd-kit/sortable";
+import {AnimateLayoutChanges, defaultAnimateLayoutChanges, useSortable} from "@dnd-kit/sortable";
 
 import {
     SortableContext,
     verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
-import {DndContext} from '@dnd-kit/core';
 import {CSS} from "@dnd-kit/utilities";
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
+import Proxy from "@/components/Proxy";
 
-const grid = 8;
-
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: "none",
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-
-    // change background colour if dragging
-    background: isDragging ? "lightgreen" : "grey",
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-});
-
-const getListStyle: any = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
-    padding: grid,
-    width: 250
-});
-
-const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
-    return result;
-};
-
-export default function ColumnComponent({column}: { column: Column }) {
+export default function ColumnComponent({column, mainTaskListIds}: { column: Column, mainTaskListIds: string[] }) {
+    const animateLayoutChanges: AnimateLayoutChanges = (args) =>
+        defaultAnimateLayoutChanges({...args, wasDragging: true});
 
     const {
         attributes,
@@ -51,18 +22,22 @@ export default function ColumnComponent({column}: { column: Column }) {
         setNodeRef,
         transform,
         transition,
-    } = useSortable({id: `${DND_COLUMN_PREFIX}${column.id}`});
+    } = useSortable({
+        id: `${DND_COLUMN_PREFIX}${column.id}`,
+    });
 
 
     const style = {
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         transition,
     };
 
     return (
         <>
-            <div className="touch-manipulation shrink-0 h-full" ref={setNodeRef}
-                 style={style} {...attributes} {...listeners}>
+            <div className="touch-manipulation shrink-0 h-full"
+                 ref={setNodeRef}
+                 style={style} {...attributes} {...listeners}
+            >
                 <div className="">
                     <div className="flex gap-x-3">
                         <div className="w-[15px] h-[15px] bg-[#49C4E5] rounded-full"></div>
@@ -72,11 +47,13 @@ export default function ColumnComponent({column}: { column: Column }) {
                     </div>
                     <div className="space-y-5">
                         <SortableContext
-                            items={column.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
+                            id={`sortable-maintask-c-${column.id}`}
+                            // items={column.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
+                            items={mainTaskListIds}
                             strategy={verticalListSortingStrategy}
                         >
                             {column.mainTasks.map((m) => (
-                                <MainTaskComponent key={m.id} mainTask={m}/>
+                                <MainTaskComponent key={`${DND_MAINTASK_PREFIX}${m.id}`} mainTask={m}/>
                             ))}
                         </SortableContext>
                     </div>

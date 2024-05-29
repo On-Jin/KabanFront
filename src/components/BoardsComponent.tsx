@@ -1,10 +1,19 @@
 ﻿'use client'
 
-import {useQuery, gql, useSuspenseQuery, TypedDocumentNode} from "@apollo/client";
+import {gql, useSuspenseQuery, TypedDocumentNode} from "@apollo/client";
 import {Board} from "@/lib/types/Board";
-import ColumnComponent from "@/components/ColumnComponent";
 import BoardComponent from "@/components/BoardComponent";
 import {Suspense, useEffect, useState} from "react";
+import {closestCenter, closestCorners, DndContext} from "@dnd-kit/core";
+import {
+    horizontalListSortingStrategy,
+    SortableContext, useSortable,
+    verticalListSortingStrategy
+} from "@dnd-kit/sortable";
+import {DND_BOARD_PREFIX, DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
+import ColumnComponent from "@/components/ColumnComponent";
+import MainTaskComponent from "@/components/MainTaskComponent";
+import {CSS} from "@dnd-kit/utilities";
 
 interface Data {
     boards: Board[];
@@ -13,20 +22,6 @@ interface Data {
 interface Variables {
     id: string;
 }
-
-// const GET_DOG_QUERY: TypedDocumentNode<Data, Variables> = gql`
-//   query GetDog($id: String) {
-//     dog(id: $id) {
-//       # By default, an object's cache key is a combination of
-//       # its __typename and id fields, so we should always make
-//       # sure the id is in the response so our data can be
-//       # properly cached.
-//       id
-//       name
-//       breed
-//     }
-//   }
-// `;
 
 const GET_BOARDS_QUERY: TypedDocumentNode<Data> = gql`
 query q {
@@ -60,8 +55,6 @@ export default function BoardsComponent() {
 
     useEffect(() => {
         if (data) {
-            console.log("##########################S")
-            console.log(data.boards)
             setBoards(data.boards);
         }
     }, [data]);
@@ -75,21 +68,25 @@ export default function BoardsComponent() {
         });
     };
 
-
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({
+        id: `${DND_BOARD_PREFIX}`,
+    });
+    const style = {
+        transform: CSS.Translate.toString(transform),
+        transition,
+    };
     return (
         <div className="touch-manipulation w-full grow flex flex-col
                         ">
             <Suspense fallback={<div>Loading...</div>}>
                 {boards.length > 0 && <BoardComponent key={boards[0].id} board={boards[0]} updateBoard={updateBoard}/>}
             </Suspense>
-
-
-            {/*{boards.map((board) => (<div key={board.id}>{board.name}</div>))}*/}
-            {/*<div className="flex">*/}
-            {/*    <div>*/}
-            {/*        {boards.map(b => <BoardComponent key={b.id} board={b} updateBoard={updateBoard}/>)}*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </div>
     );
 }
