@@ -26,7 +26,7 @@ export default function SwitchTheme() {
                     To Dark theme
                 </button>
             )}
-
+            
         </div>
     );
 }

@@ -1,6 +1,8 @@
 ﻿'use client'
 import {DataProvider, useData} from "@/context/DataContext";
 import Content from "@/shared/Content";
+import Cookies from "js-cookie";
+import {refreshAuthLink} from "@/lib/ApolloClient";
 
 export default function WaitMe({children}: { children: React.ReactNode }) {
     const {loading} = useData();

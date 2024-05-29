@@ -4,7 +4,7 @@ import {ApolloClient, createHttpLink, gql, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
 import {cookies} from "next/headers";
 import BoardsComponent from "@/components/BoardsComponent";
-import KBoard from "@/components/tests/KBoard";
+import React from "react";
 
 const httpLink = createHttpLink({
     uri: "http://localhost:5264/graphql",
@@ -29,27 +29,25 @@ const createApolloClient = () => {
 };
 
 export default async function Home() {
-    const client = createApolloClient();
-    const data = await client.query({
-        query: gql`
-      query Q {
-          me {
-            discordAvatarUrl
-            discordUsername
-            id
-          }
-        }
-    `,
-    })
+
+    // Server side query!
+    // const client = createApolloClient();
+    // const data = await client.query({
+    //     query: gql`
+    //   query Q {
+    //       me {
+    //         discordAvatarUrl
+    //         discordUsername
+    //         id
+    //       }
+    //     }
+    // `,
+    // })
 
     return (
         <>
             <SwitchTheme/>
             <BoardsComponent/>
-            {/*<KBoard/>*/}
-            {/*<div className=" text-k-black">*/}
-            {/*    {JSON.stringify(data)}*/}
-            {/*</div>*/}
         </>
     );
 }

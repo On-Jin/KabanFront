@@ -20,8 +20,6 @@ export default function MainTaskComponent({mainTask}: { mainTask: MainTask; }) {
         transform: CSS.Translate.toString(transform),
         transition,
     };
-    console.log(`${DND_MAINTASK_PREFIX}${mainTask.id} ${transition}`)
-
 
     return (
         <div

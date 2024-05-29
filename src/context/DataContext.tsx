@@ -1,7 +1,7 @@
 ﻿'use client';
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
-import createApolloClient from "@/lib/ApolloClient";
+import createApolloClient, {refreshAuthLink} from "@/lib/ApolloClient";
 
 interface DataContextType {
     data: any;
@@ -15,31 +15,30 @@ interface DataProviderProps {
     initialData?: any;
 }
 
-const client = createApolloClient();
+let client = createApolloClient();
 
 
-export const DataProvider = ({children, initialData = null}: DataProviderProps) => {
-    const [data, setData] = useState<any>(initialData);
-    const [loading, setLoading] = useState<boolean>(!initialData);
+export const DataProvider = ({children}: DataProviderProps) => {
+    const [data, setData] = useState<any>();
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        if (!initialData) {
-            const fetchData = async () => {
-                setLoading(true);
-                const response = await fetch('/api/me');
-                const result = await response.json();
-                setData(result);
-                setLoading(false);
-                console.log(result);
-            };
+        const fetchData = async () => {
+            setLoading(true);
+            const response = await fetch('/api/me');
+            const result = await response.json();
+            setData(result);
+            setLoading(false);
+            console.log(result);
+            // refreshAuthLink();
+            client = createApolloClient();
+        };
 
-            fetchData();
-        }
-    }, [initialData]);
+        fetchData();
+    }, []);
 
     return (
         <ApolloProvider client={client}>
-
             <DataContext.Provider value={{data, loading}}>
                 {/*<BoardsProvider>*/}
                 {children}

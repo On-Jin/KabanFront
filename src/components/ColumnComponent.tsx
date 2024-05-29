@@ -10,7 +10,6 @@ import {
 
 import {CSS} from "@dnd-kit/utilities";
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
-import Proxy from "@/components/Proxy";
 
 export default function ColumnComponent({column, mainTaskListIds}: { column: Column, mainTaskListIds: string[] }) {
     const animateLayoutChanges: AnimateLayoutChanges = (args) =>

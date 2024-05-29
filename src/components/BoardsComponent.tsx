@@ -1,9 +1,9 @@
 ﻿'use client'
 
-import {gql, useSuspenseQuery, TypedDocumentNode} from "@apollo/client";
+import {gql, useSuspenseQuery, TypedDocumentNode, useQuery} from "@apollo/client";
 import {Board} from "@/lib/types/Board";
 import BoardComponent from "@/components/BoardComponent";
-import {Suspense, useEffect, useState} from "react";
+import React, {Suspense, useEffect, useState} from "react";
 import {closestCenter, closestCorners, DndContext} from "@dnd-kit/core";
 import {
     horizontalListSortingStrategy,
@@ -14,6 +14,7 @@ import {DND_BOARD_PREFIX, DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Co
 import ColumnComponent from "@/components/ColumnComponent";
 import MainTaskComponent from "@/components/MainTaskComponent";
 import {CSS} from "@dnd-kit/utilities";
+import createApolloClient from "@/lib/ApolloClient";
 
 interface Data {
     boards: Board[];
@@ -47,7 +48,8 @@ query q {
 }
 `
 export default function BoardsComponent() {
-    const {data} = useSuspenseQuery(GET_BOARDS_QUERY, {
+    const client = createApolloClient();
+    const {data, refetch} = useSuspenseQuery(GET_BOARDS_QUERY, {
         // variables: {id: "1"},
     });
 
@@ -68,6 +70,38 @@ export default function BoardsComponent() {
         });
     };
 
+    async function refreshData() {
+        let ds = data?.boards?.map(b => {
+            return client.mutate({
+                mutation: gql`
+                mutation M {
+                  deleteBoard(input: { id: ${b.id} }) {
+                    board {
+                      id
+                      name
+                    }
+                  }
+                }
+            `,
+            });
+        });
+        await Promise.all(ds);
+        await client.mutate({
+            mutation: gql`
+                mutation M {
+                  populateMe(input: { name: "Populate me" }) {
+                    board {
+                      id
+                      name
+                    }
+                  }
+                }
+            `,
+        });
+        await refetch();
+    }
+
+
     const {
         attributes,
         listeners,
@@ -82,11 +116,16 @@ export default function BoardsComponent() {
         transition,
     };
     return (
-        <div className="touch-manipulation w-full grow flex flex-col
-                        ">
-            <Suspense fallback={<div>Loading...</div>}>
-                {boards.length > 0 && <BoardComponent key={boards[0].id} board={boards[0]} updateBoard={updateBoard}/>}
-            </Suspense>
-        </div>
+        <>
+            <button onClick={refreshData}>
+                Refresh Data
+            </button>
+            <div className="touch-manipulation w-full grow flex flex-col">
+                <Suspense fallback={<div>Loading...</div>}>
+                    {boards.length > 0 &&
+                        <BoardComponent key={boards[0].id} board={boards[0]} updateBoard={updateBoard}/>}
+                </Suspense>
+            </div>
+        </>
     );
 }

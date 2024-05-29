@@ -36,14 +36,14 @@ export default function Home() {
         });
         console.log(await response.text());
     }
-    
+
     async function callApiTest() {
         const response = await fetch("/api/test", {
             method: "GET"
         });
         console.log(await response.text());
     }
-    
+
     return (
         <main className="flex min-h-screen flex-col items-center dark:bg-zinc-900 dark:text-white">
             <SwitchTheme/>

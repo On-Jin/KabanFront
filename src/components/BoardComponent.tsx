@@ -24,7 +24,12 @@ export default function BoardComponent({board, updateBoard}: {
 
     const sensors = useSensors(
         useSensor(MouseSensor),
-        useSensor(TouchSensor)
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
+            },
+        })
     );
 
     function handleDragStart({active}: DragEndEvent) {
@@ -204,8 +209,8 @@ export default function BoardComponent({board, updateBoard}: {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                <div className="overflow-auto w-full h-full grow">
-                    <div className="flex space-x-6 px-4 h-full">
+                <div className="overflow-scroll w-full h-full grow px-4 ">
+                    <div className="flex gap-x-6 pb-8 h-max w-max">
                         <SortableContext
                             items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
                             strategy={horizontalListSortingStrategy}
@@ -213,6 +218,18 @@ export default function BoardComponent({board, updateBoard}: {
                             {board.columns.map(c => <ColumnComponent key={c.id} column={c}
                                                                      mainTaskListIds={c.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}/>)}
                         </SortableContext>
+                        <div
+                            className="shrink-0 grow w-[280px] flex flex-col">
+                            <div>
+                                <p className="pb-6 heading-s text-transparent">
+                                    Add column
+                                </p>
+                            </div>
+                            <div
+                                className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] flex items-center justify-center rounded-lg">
+                                + New Column
+                            </div>
+                        </div>
                     </div>
                 </div>
 
