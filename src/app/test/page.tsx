@@ -55,7 +55,7 @@ export default function Home() {
             <button type="button" onClick={callApiTest}>Test</button>
 
             <button type="button" onClick={callApiMe}>Me</button>
-            <a href="http://localhost:5264/didi">Test</a>
+            <a href={`${process.env.API_PROXY}/didi`}>Test</a>
             <Link href="/">Home</Link>
 
         </main>

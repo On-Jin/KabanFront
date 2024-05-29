@@ -11,7 +11,7 @@ export default async function handler(
 ) {
 
     console.log(`default=${req.cookies['default']}`);
-    const apiLogin = await fetch(`http://localhost:5264/didi`, {
+    const apiLogin = await fetch(`${process.env.API_PROXY}/didi`, {
         headers: {
             Cookie: `default=${req.cookies['default']}`,
             // 'Access-Control-Allow-Credentials': "true",

@@ -32,7 +32,7 @@ refreshAuthLink();
 
 const createApolloClient = () => {
     return new ApolloClient({
-        uri: "http://localhost:5264",
+        uri: process.env.API_PROXY,
         cache: new InMemoryCache(),
         link: authLink.concat(httpLink),
         connectToDevTools: true

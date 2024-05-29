@@ -7,7 +7,7 @@ import BoardsComponent from "@/components/BoardsComponent";
 import React from "react";
 
 const httpLink = createHttpLink({
-    uri: "http://localhost:5264/graphql",
+    uri: `${process.env.API_PROXY}/graphql`,
 });
 
 const authLink = setContext((_, {headers}) => {
@@ -22,7 +22,7 @@ const authLink = setContext((_, {headers}) => {
 
 const createApolloClient = () => {
     return new ApolloClient({
-        uri: "http://localhost:5264",
+        uri: process.env.API_PROXY,
         cache: new InMemoryCache(),
         link: authLink.concat(httpLink),
     });
