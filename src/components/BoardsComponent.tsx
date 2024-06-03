@@ -1,27 +1,14 @@
 ﻿'use client'
 
-import {gql, useSuspenseQuery, TypedDocumentNode, useQuery} from "@apollo/client";
+import {gql, useSuspenseQuery, TypedDocumentNode, useQuery, DocumentNode} from "@apollo/client";
 import {Board} from "@/lib/types/Board";
 import BoardComponent from "@/components/BoardComponent";
-import React, {Suspense, useEffect, useState} from "react";
-import {closestCenter, closestCorners, DndContext} from "@dnd-kit/core";
-import {
-    horizontalListSortingStrategy,
-    SortableContext, useSortable,
-    verticalListSortingStrategy
-} from "@dnd-kit/sortable";
-import {DND_BOARD_PREFIX, DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
-import ColumnComponent from "@/components/ColumnComponent";
-import MainTaskComponent from "@/components/MainTaskComponent";
-import {CSS} from "@dnd-kit/utilities";
+import React, {Suspense, useCallback, useEffect, useState} from "react";
 import createApolloClient from "@/lib/ApolloClient";
+import {GraphQLError} from "graphql/error";
 
 interface Data {
     boards: Board[];
-}
-
-interface Variables {
-    id: string;
 }
 
 const GET_BOARDS_QUERY: TypedDocumentNode<Data> = gql`
@@ -48,6 +35,7 @@ query q {
 }
 `
 export default function BoardsComponent() {
+    const [counter, SetCounter] = useState<number>(0);
     const client = createApolloClient();
     const {data, refetch} = useSuspenseQuery(GET_BOARDS_QUERY, {
         // variables: {id: "1"},
@@ -58,17 +46,37 @@ export default function BoardsComponent() {
     useEffect(() => {
         if (data) {
             setBoards(data.boards);
+            console.log(data.boards)
         }
     }, [data]);
 
-    const updateBoard = (updatedBoard: Board) => {
+    const updateBoard = useCallback(async (updatedBoard?: Board, gql?: DocumentNode) => {
         console.log("updateBoard")
+        if (updatedBoard) {
         setBoards(prevBoards => {
             const newBoards = prevBoards.map(board => (board.id === updatedBoard.id ? updatedBoard : board));
             console.log('Updated boards:', newBoards);
             return newBoards;
         });
-    };
+        }
+
+        if (gql != undefined) {
+            console.log(gql);
+            try {
+
+                const {data} = await client.mutate({mutation: gql});
+
+                const bb: Board = {
+                    ...data.patchColumn.board
+                };
+                if (JSON.stringify(updatedBoard) != JSON.stringify(bb)) {
+                    console.log("DIFF");
+                }
+            } catch (e) {
+                console.log(JSON.stringify(e));
+            }
+        }
+    }, []);
 
     async function refreshData() {
         let ds = data?.boards?.map(b => {
@@ -101,22 +109,9 @@ export default function BoardsComponent() {
         await refetch();
     }
 
-
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-    } = useSortable({
-        id: `${DND_BOARD_PREFIX}`,
-    });
-    const style = {
-        transform: CSS.Translate.toString(transform),
-        transition,
-    };
     return (
         <>
+            <div onClick={() => SetCounter(counter + 1)}>click {counter}</div>
             <button onClick={refreshData}>
                 Refresh Data
             </button>

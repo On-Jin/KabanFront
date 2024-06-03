@@ -12,6 +12,7 @@
     "@apollo/client": "^3.10.4",
     "@dnd-kit/sortable": "^8.0.0",
     "@types/js-cookie": "^3.0.6",
+    "clsx": "^2.1.1",
     "graphql": "^16.8.1",
     "js-cookie": "^3.0.5",
     "next": "14.2.3",

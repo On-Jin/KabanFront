@@ -1,7 +1,11 @@
-﻿import {ApolloClient, ApolloLink, createHttpLink, InMemoryCache} from "@apollo/client";
+﻿import {ApolloClient, ApolloLink, createHttpLink, DefaultOptions, from, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
 import Cookies from "js-cookie";
+import {removeTypenameFromVariables} from '@apollo/client/link/remove-typename';
 // import {cookies} from "next/headers";
+
+
+const removeTypenameLink = removeTypenameFromVariables();
 
 const httpLink = createHttpLink({
     uri: "/api/graphql/",
@@ -30,12 +34,26 @@ export const refreshAuthLink = () => {
 refreshAuthLink();
 
 
+const defaultOptions: DefaultOptions = {
+    watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+    },
+    query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+    },
+};
+
 const createApolloClient = () => {
     return new ApolloClient({
         uri: process.env.API_PROXY,
-        cache: new InMemoryCache(),
-        link: authLink.concat(httpLink),
-        connectToDevTools: true
+        cache: new InMemoryCache({
+            addTypename: false,
+        }),
+        link: from([removeTypenameLink, authLink, httpLink]),
+        connectToDevTools: true,
+        defaultOptions
     });
 };
 
