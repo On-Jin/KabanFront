@@ -5,63 +5,30 @@ import {Board} from "@/lib/types/Board";
 import BoardComponent from "@/components/BoardComponent";
 import React, {Suspense, useCallback, useEffect, useState} from "react";
 import createApolloClient from "@/lib/ApolloClient";
-import {GraphQLError} from "graphql/error";
+import {GET_BOARDS_QUERY} from "@/lib/gqlMutation";
 
-interface Data {
-    boards: Board[];
-}
-
-const GET_BOARDS_QUERY: TypedDocumentNode<Data> = gql`
-query q {
-  boards {
-    id
-    name
-    columns {
-      id
-      name
-      mainTasks {
-        description
-        id
-        status
-        title
-        subTasks {
-          id
-          isCompleted
-          title
-        }
-      }
-    }
-  }
-}
-`
 export default function BoardsComponent() {
     const [counter, SetCounter] = useState<number>(0);
     const client = createApolloClient();
-    const {data, refetch} = useSuspenseQuery(GET_BOARDS_QUERY, {
-        // variables: {id: "1"},
-    });
+    const {data, refetch} = useSuspenseQuery(GET_BOARDS_QUERY);
 
     const [boards, setBoards] = useState<Board[]>([]);
 
     useEffect(() => {
         if (data) {
             setBoards(data.boards);
-            console.log(data.boards)
         }
     }, [data]);
 
     const updateBoard = useCallback(async (updatedBoard?: Board, gql?: DocumentNode) => {
         console.log("updateBoard")
         if (updatedBoard) {
-        setBoards(prevBoards => {
-            const newBoards = prevBoards.map(board => (board.id === updatedBoard.id ? updatedBoard : board));
-            console.log('Updated boards:', newBoards);
-            return newBoards;
-        });
+            setBoards(prevBoards => {
+                return prevBoards.map(board => (board.id === updatedBoard.id ? updatedBoard : board));
+            });
         }
 
         if (gql != undefined) {
-            console.log(gql);
             try {
 
                 const {data} = await client.mutate({mutation: gql});

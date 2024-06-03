@@ -45,7 +45,7 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
         return (
             <>
                 <div
-                    className={clsx("touch-manipulation shrink-0 h-full",
+                    className={clsx("touch-manipulation shrink-0 grow",
                         {
                             "invisible": `${DND_COLUMN_PREFIX}${column.id}` === activeId
                         }
@@ -57,7 +57,7 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
                         <div className="flex gap-x-3">
                             <div className="w-[15px] h-[15px] bg-[#49C4E5] rounded-full"></div>
                             <p className="pb-6 heading-s text-k-medium-grey">
-                                {column.name} ({column.mainTasks.length})
+                                {column.name} ({column.mainTasks.length}) {column.id}
                             </p>
                         </div>
                         <div className="space-y-5">
