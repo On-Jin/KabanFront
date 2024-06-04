@@ -33,7 +33,11 @@ const BoardComponent = React.memo(({board, updateBoard}: {
         const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
         const sensors = useSensors(
-            useSensor(MouseSensor),
+            useSensor(MouseSensor, {
+                activationConstraint: {
+                    distance: 8,
+                },
+            }),
             useSensor(TouchSensor, {
                 activationConstraint: {
                     delay: 250,
@@ -232,7 +236,7 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                 const mainTask = board.columns.flatMap(c => c.mainTasks).find(c => activeId == `${DND_MAINTASK_PREFIX}${c.id}`)!;
                 return (
                     <MainTaskComponent
-                        mainTask={mainTask}
+                        initialMainTask={mainTask}
                     />
                 );
             } else {
@@ -250,7 +254,7 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
                 >
-                    <div className="overflow-scroll w-full h-full grow px-4 flex">
+                    <div className="overflow-scroll w-full h-full grow px-4">
                         <div className="flex gap-x-6 pb-8 h-max w-max grow">
                             <SortableContext
                                 items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}

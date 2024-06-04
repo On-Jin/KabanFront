@@ -67,7 +67,8 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
                                 strategy={verticalListSortingStrategy}
                             >
                                 {column.mainTasks.map((m) => (
-                                    <MainTaskComponent key={`${DND_MAINTASK_PREFIX}${m.id}`} mainTask={m} activeId={activeId}/>
+                                    <MainTaskComponent key={`${DND_MAINTASK_PREFIX}${m.id}`} initialMainTask={m}
+                                                       activeId={activeId}/>
                                 ))}
                             </SortableContext>
                         </div>

@@ -2,6 +2,7 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
 import createApolloClient, {refreshAuthLink} from "@/lib/ApolloClient";
+import {BoardsProvider} from "@/context/BoardsContext";
 
 interface DataContextType {
     data: any;
@@ -40,9 +41,11 @@ export const DataProvider = ({children}: DataProviderProps) => {
     return (
         <ApolloProvider client={client}>
             <DataContext.Provider value={{data, loading}}>
-                {/*<BoardsProvider>*/}
-                {children}
-                {/*</BoardsProvider>*/}
+                <BoardsProvider>
+                    {/*<BoardsProvider>*/}
+                    {children}
+                    {/*</BoardsProvider>*/}
+                </BoardsProvider>
             </DataContext.Provider>
         </ApolloProvider>
 

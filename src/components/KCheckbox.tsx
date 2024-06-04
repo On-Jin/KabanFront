@@ -1,9 +1,11 @@
 ﻿import Image from "next/image";
 import iconCheck from '/public/icon-check.svg';
+import {ReactNode} from "react";
 
-export default function KCheckbox({value, updateCheckbox}: {
+export default function KCheckbox({value, updateCheckbox, children}: {
     value: boolean,
-    updateCheckbox: (isChecked: boolean) => void
+    updateCheckbox: (isChecked: boolean) => void,
+    children: ReactNode,
 }) {
 
     return (<div
@@ -32,6 +34,8 @@ export default function KCheckbox({value, updateCheckbox}: {
         </div>
         <label htmlFor="checkbox"
                className={"body-m " + (value ? "line-through opacity-50" : "")}
-        >Input</label>
+        >
+            {children}
+        </label>
     </div>);
 }

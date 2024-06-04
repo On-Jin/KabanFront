@@ -31,30 +31,30 @@ export function moveColumnMutation(columnId: number, index: number) {
 
 export function moveMainTask(mainTaskId: number, columnName: string, index: number) {
     return gql`
-                mutation {
-                  moveMainTask(input: { id: ${mainTaskId}, status: "${columnName}" order: ${index} }) {
-                    board {
-                      id
-                      name
-                      columns {
+        mutation {
+            moveMainTask(input: { id: ${mainTaskId}, status: "${columnName}" order: ${index} }) {
+                board {
+                    id
+                    name
+                    columns {
                         id
                         name
                         mainTasks {
-                          description
-                          id
-                          status
-                          title
-                          subTasks {
+                            description
                             id
-                            isCompleted
+                            status
                             title
-                          }
+                            subTasks {
+                                id
+                                isCompleted
+                                title
+                            }
                         }
-                      }
                     }
-                  }
                 }
-            `;
+            }
+        }
+    `;
 }
 
 interface Data {
@@ -62,7 +62,7 @@ interface Data {
 }
 
 export const GET_BOARDS_QUERY: TypedDocumentNode<Data> = gql`
-query q {
+query {
   boards {
     id
     name

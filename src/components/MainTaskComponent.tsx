@@ -3,8 +3,25 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import clsx from "clsx";
+import Modal from "@/components/Modal";
+import {useEffect, useState} from "react";
+import KCheckbox from "@/components/KCheckbox";
+import KDropDown from "@/components/KDropDown";
+import {useBoards} from "@/context/BoardsContext";
+import MainTaskModal from "@/components/MainTaskModal";
 
-export default function MainTaskComponent({mainTask, activeId}: { mainTask: MainTask, activeId?: string }) {
+export default function MainTaskComponent({initialMainTask, activeId}: {
+    initialMainTask: MainTask,
+    activeId?: string
+}) {
+
+    const [mainTask, setMainTask] = useState(initialMainTask);
+
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
+
     const {
         attributes,
         listeners,
@@ -20,6 +37,7 @@ export default function MainTaskComponent({mainTask, activeId}: { mainTask: Main
         transform: CSS.Translate.toString(transform),
         transition,
     };
+
 
     return (
         <div
@@ -38,6 +56,9 @@ export default function MainTaskComponent({mainTask, activeId}: { mainTask: Main
             style={style}
             {...attributes}
             {...listeners}
+            onClick={() => {
+                handleOpenModal();
+            }}
         >
             <div>
                 <p className="heading-m">
@@ -46,6 +67,9 @@ export default function MainTaskComponent({mainTask, activeId}: { mainTask: Main
                 <p className="body-m text-k-medium-grey">
                     0 of 3 substasks [{mainTask.id}]
                 </p>
+                <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+                    <MainTaskModal mainTask={mainTask} setMainTask={setMainTask}/>
+                </Modal>
             </div>
         </div>
     );

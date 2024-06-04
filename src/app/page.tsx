@@ -5,6 +5,7 @@ import {setContext} from "@apollo/client/link/context";
 import {cookies} from "next/headers";
 import BoardsComponent from "@/components/BoardsComponent";
 import React from "react";
+import {BoardsProvider} from "@/context/BoardsContext";
 
 const httpLink = createHttpLink({
     uri: `${process.env.API_PROXY}/graphql`,
