@@ -9,6 +9,7 @@ import KCheckbox from "@/components/KCheckbox";
 import KDropDown from "@/components/KDropDown";
 import {useBoards} from "@/context/BoardsContext";
 import MainTaskModal from "@/components/MainTaskModal";
+import MainTaskEditModal from "@/components/MainTaskEditModal";
 
 export default function MainTaskComponent({initialMainTask, activeId}: {
     initialMainTask: MainTask,
@@ -68,7 +69,8 @@ export default function MainTaskComponent({initialMainTask, activeId}: {
                     0 of 3 substasks [{mainTask.id}]
                 </p>
                 <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                    <MainTaskModal mainTask={mainTask} setMainTask={setMainTask}/>
+                    {/*<MainTaskModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
+                    <MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>
                 </Modal>
             </div>
         </div>

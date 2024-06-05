@@ -4,8 +4,9 @@ import {useBoards} from "@/context/BoardsContext";
 import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
+import {useState} from "react";
 
-export default function MainTaskModal({mainTask,  setMainTask}: {
+export default function MainTaskModal({mainTask, setMainTask}: {
     mainTask: MainTask,
     setMainTask: (value: (((prevState: MainTask) => MainTask) | MainTask)) => void
 }) {
@@ -30,24 +31,39 @@ export default function MainTaskModal({mainTask,  setMainTask}: {
         });
     });
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+
     return (
         <>
-            <div className="space-y-6">
+            <div className="space-y-6" onClick={() => setIsMenuOpen(false)}>
                 <div className="flex justify-between">
                     <p className="heading-l">
                         {mainTask.title}
                     </p>
-                    <div className="ml-4 self-center">
+                    <div className="relative px-4 self-center z-10" onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMenuOpen(!isMenuOpen);
+                    }}>
                         <Image
-                            className="w-[10px] h-auto"
+                            className="w-[5px] h-auto"
                             src={iconVerticalEllipsis} alt="task menu"
                         />
+                        {isMenuOpen && (
+                            <div className="absolute left-1/2 transform -translate-x-1/2 top-[120%]
+                                            rounded-lg p-4 space-y-4 w-[190px] bg-white body-l">
+                                <p className="text-k-medium-grey hover:font-bold">
+                                    Edit Task
+                                </p>
+                                <p className="text-k-red hover:font-bold">
+                                    Delete Task
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <p className="body-l text-k-medium-grey">{mainTask.description}</p>
                 <div>
                     <p className="body-m text-k-medium-grey">Subtasks (0 of 3)</p>
-                    <div>{mainTask.subTasks.length}</div>
                     <div>
                         {mainTask.subTasks.map(s => (
                             <KCheckbox key={s.id} value={s.isCompleted}

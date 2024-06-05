@@ -1,6 +1,6 @@
 ﻿export default function KStringput({inputText, onChangeInput}: {
     inputText: string,
-    onChangeInput?: (isChecked: string) => void
+    onChangeInput?: (value: string) => void
 }) {
     const isEmpty = inputText == undefined || inputText.length === 0;
 

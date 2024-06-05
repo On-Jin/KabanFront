@@ -27,11 +27,11 @@ const Modal = ({isOpen, onClose, children}:
         <div className="fixed left-0 right-0 bottom-0 top-0 w-full h-full
                         bg-opacity-50 bg-k-black
                         z-40
-                        flex items-center" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => {
+                        flex items-center justify-center" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => {
             e.stopPropagation();
             onClose()
         }}>
-            <div className="bg-white w-full h-fit m-4 p-6 rounded-lg " onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white w-full h-fit m-4 p-6 rounded-lg md:w-[480px]" onClick={(e) => e.stopPropagation()}>
                 {children}
             </div>
         </div>,
