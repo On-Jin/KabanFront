@@ -202,10 +202,10 @@ export default function DesignSystem() {
                 <div className="interactive-checkbox space-y-4 w-full">
                     <div className="text-k-medium-grey body-m dark:text-white">Subtask Checkbox</div>
                     <div className="w-full">
-                        <KCheckbox value={checkbox} updateCheckbox={(v) => setCheckbox(v)}/>
+                        <KCheckbox value={checkbox} updateCheckbox={(v) => setCheckbox(v)}>input</KCheckbox>
                     </div>
                     <div className="w-full">
-                        <KCheckbox value={!checkbox} updateCheckbox={(v) => setCheckbox(v)}/>
+                        <KCheckbox value={!checkbox} updateCheckbox={(v) => setCheckbox(v)}>input</KCheckbox>
                     </div>
                 </div>
                 <div className="interactive-stringput space-y-4 w-full">
