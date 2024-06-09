@@ -1,40 +1,44 @@
 ﻿import {MainTask} from "@/lib/types/MainTask";
 import KCheckbox from "@/components/KCheckbox";
-import {useBoards} from "@/context/BoardsContext";
 import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {usePathname, useSearchParams,} from 'next/navigation';
+import {useBoardStore} from "@/hooks/useStore";
 
-export default function MainTaskModal({mainTask, setMainTask}: {
+export default function MainTaskModal({mainTask}: {
     mainTask: MainTask,
-    setMainTask: (value: (((prevState: MainTask) => MainTask) | MainTask)) => void
 }) {
-    const {boards, updateSubTask} = useBoards();
+    const columnNames = useBoardStore((state) => state.columnNames);
+    const updateSubTask = useBoardStore((state) => state.updateSubTask);
+    const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
+
+    const {replace} = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    useEffect(() => {
+        // run navigation after the first render
+        const params = new URLSearchParams(searchParams?.toString());
+        params.set('mainTask', mainTask.id.toString());
+        replace(`${pathname}?${params.toString()}`);
+        return () => {
+            params.delete('mainTask');
+            replace(`${pathname}?${params.toString()}`);
+        };
+    }, [])
 
     function setSubTaskComplete(subTaskId: number) {
         const st = mainTask.subTasks.find(subTask => subTask.id === subTaskId)!;
-        st.isCompleted = !st.isCompleted;
-        setMainTask({...mainTask});
-        updateSubTask(subTaskId, st.isCompleted)
+        updateSubTask(subTaskId, !st.isCompleted, undefined)
     }
-
-    const columnNames: string[] = [];
-
-    boards.forEach((board) => {
-        board.columns.forEach((column) => {
-            column.mainTasks.forEach(m => {
-                if (m.id == mainTask.id) {
-                    board.columns.forEach(c => columnNames.push(c.name));
-                }
-            });
-        });
-    });
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     return (
         <>
+            {pathname}
             <div className="space-y-6" onClick={() => setIsMenuOpen(false)}>
                 <div className="flex justify-between">
                     <p className="heading-l">
@@ -73,7 +77,8 @@ export default function MainTaskModal({mainTask, setMainTask}: {
                 </div>
                 <div>
                     <p className="body-m text-k-medium-grey">Current Status</p>
-                    <KDropDown value={mainTask.status} options={columnNames} onChange={() => {
+                    <KDropDown value={mainTask.status} options={columnNames} onChange={(e) => {
+                        editStatusMainTask(mainTask.id, e);
                     }}/>
                 </div>
             </div>

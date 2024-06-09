@@ -5,18 +5,17 @@ import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import clsx from "clsx";
 import Modal from "@/components/Modal";
 import {useEffect, useState} from "react";
-import KCheckbox from "@/components/KCheckbox";
-import KDropDown from "@/components/KDropDown";
-import {useBoards} from "@/context/BoardsContext";
 import MainTaskModal from "@/components/MainTaskModal";
 import MainTaskEditModal from "@/components/MainTaskEditModal";
+import {useBoardStore} from "@/hooks/useStore";
 
-export default function MainTaskComponent({initialMainTask, activeId}: {
-    initialMainTask: MainTask,
-    activeId?: string
+export default function MainTaskComponent({mainTask, isDragElement}: {
+    mainTask: MainTask,
+    isDragElement: boolean
 }) {
+    const activeId = useBoardStore((state) => state.activeId);
 
-    const [mainTask, setMainTask] = useState(initialMainTask);
+    // const [mainTask, setMainTask] = useState(initialMainTask);
 
     const [isModalOpen, setModalOpen] = useState(false);
 
@@ -49,7 +48,7 @@ export default function MainTaskComponent({initialMainTask, activeId}: {
                         rounded-md \
                         ",
                 {
-                    "invisible": `${DND_MAINTASK_PREFIX}${mainTask.id}` === activeId
+                    "invisible": !isDragElement && `${DND_MAINTASK_PREFIX}${mainTask.id}` === activeId
                 }
             )}
 
@@ -66,11 +65,11 @@ export default function MainTaskComponent({initialMainTask, activeId}: {
                     {mainTask.title}
                 </p>
                 <p className="body-m text-k-medium-grey">
-                    0 of 3 substasks [{mainTask.id}]
+                    0 of {mainTask.subTasks.length} substasks [{mainTask.id}]
                 </p>
                 <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                    {/*<MainTaskModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
-                    <MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>
+                    <MainTaskModal mainTask={mainTask}/>
+                    {/*<MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
                 </Modal>
             </div>
         </div>

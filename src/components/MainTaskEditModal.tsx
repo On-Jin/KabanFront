@@ -6,12 +6,13 @@ import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
 import {useState} from "react";
 import KStringput from "@/components/KStringput";
+import {useBoardStore} from "@/hooks/useStore";
 
 export default function MainTaskEditModal({mainTask, setMainTask}: {
     mainTask: MainTask,
     setMainTask: (value: (((prevState: MainTask) => MainTask) | MainTask)) => void
 }) {
-    const {boards, updateSubTask} = useBoards();
+    const columnNames = useBoardStore((state) => state.columnNames);
 
     const [shadowMainTask, setShadowMainTask] = useState(mainTask)
 
@@ -22,18 +23,16 @@ export default function MainTaskEditModal({mainTask, setMainTask}: {
     //     updateSubTask(subTaskId, st.isCompleted)
     // }
 
-    const columnNames: string[] = [];
-
-    boards.forEach((board) => {
-        board.columns.forEach((column) => {
-            column.mainTasks.forEach(m => {
-                if (m.id == mainTask.id) {
-                    board.columns.forEach(c => columnNames.push(c.name));
-                }
-            });
-        });
-    });
-
+    // const columnNames: string[] = [];
+    //
+    // board!.columns.forEach((column) => {
+    //     column.mainTasks.forEach(m => {
+    //         if (m.id == mainTask.id) {
+    //             board!.columns.forEach(c => columnNames.push(c.name));
+    //         }
+    //     });
+    // });
+    //
 
     return (
         <>

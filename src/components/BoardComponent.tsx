@@ -14,23 +14,26 @@ import {horizontalListSortingStrategy, SortableContext, verticalListSortingStrat
 import {Column} from "@/lib/types/Column";
 import React, {useEffect, useState} from "react";
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
-import {arrayMove} from "@/lib/Utils";
-import {DocumentNode, gql} from "@apollo/client";
 import MainTaskComponent from "@/components/MainTaskComponent";
 import {createPortal} from "react-dom";
-import {moveColumnMutation, moveMainTask} from "@/lib/gqlMutation";
+import {useBoardStore} from "@/hooks/useStore";
 
-const BoardComponent = React.memo(({board, updateBoard}: {
-        board: Board,
-        updateBoard: (updatedBoard?: Board, gql?: DocumentNode) => void
-    }) => {
+const BoardComponent = React.memo(() => {
+
+
+        const moveMainTask = useBoardStore((state) => state.moveMainTask);
+        const updateBoard = useBoardStore((state) => state.updateBoard);
+        const moveColumn = useBoardStore((state) => state.moveColumn);
+        const board = useBoardStore((state) => state.board);
+        const activeId = useBoardStore((state) => state.activeId);
+        const setActiveId = useBoardStore((state) => state.setActiveId);
         console.log("Board invoked");
 
         useEffect(() => {
             console.log("Board render");
         });
 
-        const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+        // const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
         const sensors = useSensors(
             useSensor(MouseSensor, {
@@ -48,7 +51,7 @@ const BoardComponent = React.memo(({board, updateBoard}: {
 
         function handleDragStart({active}: DragEndEvent) {
             console.log("handleDragStart");
-            setActiveId(active.id);
+            setActiveId(active.id.toString());
         }
 
         function getIdFromDndString(id: string, prefix: string) {
@@ -103,16 +106,6 @@ const BoardComponent = React.memo(({board, updateBoard}: {
             if (overIndex != -1) {
                 newIndex = overColumn.mainTasks.length + 1;
             } else {
-                // const isBelowOverItem =
-                //     over &&
-                //     active.rect.current.translated &&
-                //     active.rect.current.translated.top >
-                //     over.rect.top + over.rect.height;
-                //
-                // const modifier = isBelowOverItem ? 1 : 0;
-                //
-                // newIndex =
-                //     overIndex >= 0 ? overIndex + modifier : overColumn.mainTasks.length + 1;
                 newIndex = overColumn.mainTasks.length + 1;
             }
 
@@ -151,20 +144,12 @@ const BoardComponent = React.memo(({board, updateBoard}: {
             const activeColumn = getColumnWithDndId(activeDndId);
             if (activeColumn != null && over?.id) {
                 const overDndId = over?.id.toString();
-                const overColumn = getColumnWithDndId(overDndId)!;
 
-                const activeId = getIdFromDndString(activeDndId, DND_COLUMN_PREFIX);
                 const overId = getIdFromDndString(overDndId, DND_COLUMN_PREFIX);
-                const activeIndex = board.columns.findIndex(m => m.id == activeId);
                 const overIndex = board.columns.findIndex(m => m.id == overId);
 
-                const newBoard = {
-                    ...board,
-                    columns: arrayMove(board.columns, activeIndex, overIndex)
-                };
-
                 console.log(`Column ${activeColumn.id} [${activeColumn.name}] to index ${overIndex}`)
-                updateBoard(newBoard, moveColumnMutation(activeColumn.id, overIndex));
+                moveColumn(activeColumn.id, overIndex);
             } else {
                 const activeColumn = getColumnWithMainTaskDndId(activeDndId);
 
@@ -191,29 +176,9 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                 const overIndex = overColumn.mainTasks.findIndex(m => m.id == overId);
 
                 if (activeIndex !== overIndex) {
-                    const overColumnIndex = board.columns.indexOf(overColumn);
-
-                    const newBoard = {
-                        ...board,
-                        columns: board.columns.map((column, index) => {
-                                if (index === overColumnIndex) {
-                                    return {
-                                        ...column, mainTasks: arrayMove(
-                                            overColumn.mainTasks,
-                                            activeIndex,
-                                            overIndex
-                                        ),
-                                    };
-                                }
-
-                                return column;
-                            }
-                        ),
-                    };
-                    updateBoard(newBoard, moveMainTask(activeId, overColumn.name, overIndex));
+                    moveMainTask(activeIndex, overIndex, overColumn, activeId, true);
                 } else {
-                    // setBoard already handled by DragOver. Only make api update
-                    updateBoard(undefined, moveMainTask(activeId, overColumn.name, overIndex));
+                    moveMainTask(activeIndex, overIndex, overColumn, activeId, false);
                 }
             }
             setActiveId(null);
@@ -229,6 +194,7 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                     <ColumnComponent
                         column={column}
                         mainTaskListIds={column.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
+                        isDragElement={true}
                     />
                 )
                     ;
@@ -236,7 +202,8 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                 const mainTask = board.columns.flatMap(c => c.mainTasks).find(c => activeId == `${DND_MAINTASK_PREFIX}${c.id}`)!;
                 return (
                     <MainTaskComponent
-                        initialMainTask={mainTask}
+                        mainTask={mainTask}
+                        isDragElement={true}
                     />
                 );
             } else {
@@ -263,8 +230,9 @@ const BoardComponent = React.memo(({board, updateBoard}: {
                                 {
                                     board.columns.map(c =>
                                         <ColumnComponent
-                                            key={c.id} column={c} activeId={activeId?.toString()}
+                                            key={c.id} column={c}
                                             mainTaskListIds={c.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
+                                            isDragElement={false}
                                         />)
                                 }
                             </SortableContext>

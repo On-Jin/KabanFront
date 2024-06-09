@@ -1,7 +1,7 @@
 ﻿'use client'
 import {Column} from "@/lib/types/Column";
 import MainTaskComponent from "@/components/MainTaskComponent";
-import {AnimateLayoutChanges, defaultAnimateLayoutChanges, useSortable} from "@dnd-kit/sortable";
+import {useSortable} from "@dnd-kit/sortable";
 import clsx from 'clsx';
 
 import {
@@ -12,19 +12,19 @@ import {
 import {CSS} from "@dnd-kit/utilities";
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import React, {useEffect} from "react";
+import {useBoardStore} from "@/hooks/useStore";
 
-const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
+const ColumnComponent = React.memo(({column, mainTaskListIds, isDragElement}: {
         column: Column,
         mainTaskListIds: string[],
-        activeId?: string
+        isDragElement: boolean
     }) => {
-        const animateLayoutChanges: AnimateLayoutChanges = (args) =>
-            defaultAnimateLayoutChanges({...args, wasDragging: true});
+        const activeId = useBoardStore((state) => state.activeId);
 
         useEffect(() => {
             console.log(`ChildComponent re-rendered ${column.name}`);
             // console.log(JSON.stringify(column));
-        });
+        }, []);
 
         const {
             attributes,
@@ -47,7 +47,7 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
                 <div
                     className={clsx("touch-manipulation shrink-0 grow",
                         {
-                            "invisible": `${DND_COLUMN_PREFIX}${column.id}` === activeId
+                            "invisible": !isDragElement && `${DND_COLUMN_PREFIX}${column.id}` === activeId
                         }
                     )}
                     ref={setNodeRef}
@@ -67,8 +67,9 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, activeId}: {
                                 strategy={verticalListSortingStrategy}
                             >
                                 {column.mainTasks.map((m) => (
-                                    <MainTaskComponent key={`${DND_MAINTASK_PREFIX}${m.id}`} initialMainTask={m}
-                                                       activeId={activeId}/>
+                                    <MainTaskComponent key={`${DND_MAINTASK_PREFIX}${m.id}`}
+                                                       mainTask={m}
+                                                       isDragElement={false}/>
                                 ))}
                             </SortableContext>
                         </div>

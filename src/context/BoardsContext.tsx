@@ -1,14 +1,22 @@
-﻿import React, {createContext, useContext, useState, useEffect, useCallback} from 'react';
-import {gql, useQuery, DocumentNode} from '@apollo/client';
+﻿import React, {createContext, useContext, useState, useEffect, useCallback, useReducer, Dispatch} from 'react';
+import {gql, useQuery, DocumentNode, useLazyQuery} from '@apollo/client';
 import {Board} from '@/lib/types/Board';
 import createApolloClient from '@/lib/ApolloClient';
-import {GET_BOARDS_QUERY} from '@/lib/gqlMutation';
+import {GET_BOARD_BY_ID_QUERY, GET_BOARDS_IDS, GET_BOARDS_QUERY} from '@/lib/gqlMutation';
+
+interface BoardInfoData {
+    id: number,
+    name: string,
+}
 
 interface BoardsContextProps {
-    boards: Board[];
+    board: Board | null;
+    columnNames: string[];
+    boardIds: BoardInfoData[] | null;
     updateBoard: (updatedBoard?: Board, gql?: DocumentNode) => Promise<void>;
     updateSubTask: (subTaskId: number, subTaskIsComplete?: boolean, subTaskTitle?: string) => Promise<void>;
     refreshData: () => Promise<void>;
+    selectBoard: (id: number) => void;
 }
 
 const BoardsContext = createContext<BoardsContextProps | undefined>(undefined);
@@ -23,59 +31,65 @@ export const useBoards = () => {
 
 export const BoardsProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const client = createApolloClient();
-    const {data, refetch} = useQuery(GET_BOARDS_QUERY);
-    const [boards, setBoards] = useState<Board[]>([]);
+    const [boardIds, setBoardIds] = useState<BoardInfoData[] | null>(null);
+    const {data: boardIdsData, refetch} = useQuery(GET_BOARDS_IDS);
+    const [getBoardById, {data: boardData}] = useLazyQuery(GET_BOARD_BY_ID_QUERY);
+    const [board, setBoard] = useState<Board | null>(null);
+    const [columnNames, setColumnNames] = useState<string[]>([]);
+
+    const selectBoard = useCallback((id: number) => {
+        getBoardById({variables: {id}});
+    }, [getBoardById]);
+
+    useEffect(() => {
+        if (board) {
+            setColumnNames(board.columns.map(c => c.name));
+        }
+    }, [board]);
 
 
     useEffect(() => {
-        if (data) {
-            setBoards(data.boards);
+        if (boardIdsData) {
+            setBoardIds(boardIdsData.boards);
         }
-    }, [data]);
+    }, [boardIdsData]);
+
+    useEffect(() => {
+        if (boardData) {
+            setBoard(boardData.board)
+        }
+    }, [boardData]);
+
 
     const updateSubTask = useCallback(async (subTaskId: number, subTaskIsComplete?: boolean, subTaskTitle?: string) => {
-        await client.mutate({
-            mutation: gql`
-                mutation PatchSubTask($id: Int!, $isCompleted: Boolean, $title: String){
-                    patchSubTask(input: { id: $id, isCompleted: $isCompleted, title: $title }) {
-                        board {
-                            id
-                            name
+        try {
+            await client.mutate({
+                mutation: gql`
+                    mutation PatchSubTask($id: Int!, $isCompleted: Boolean, $title: String){
+                        patchSubTask(input: { id: $id, isCompleted: $isCompleted, title: $title }) {
+                            board {
+                                id
+                                name
+                            }
                         }
                     }
-                }
-            `,
-            variables: {
-                id: subTaskId,
-                isCompleted: subTaskIsComplete,
-                title: subTaskTitle,
-            },
-            errorPolicy: "all"
-        });
+                `,
+                variables: {
+                    id: subTaskId,
+                    isCompleted: subTaskIsComplete,
+                    title: subTaskTitle,
+                },
+                errorPolicy: "all"
+            });
+        } catch (e) {
+            console.log(JSON.stringify(e));
+        }
 
     }, []);
 
-    // const updateMainTask = useCallback(async (variables: any) => {
-    //     await client.mutate({
-    //         mutation: gql`
-    //             mutation PatchSubTask($id: Int!, $isCompleted: Boolean, $title: String){
-    //                 moveSubTask(input: { id: $id, isCompleted: $isCompleted, title: $title }) {
-    //                     board {
-    //                         id
-    //                         name
-    //                     }
-    //                 }
-    //             }
-    //         `,
-    //         variables,
-    //         errorPolicy: "all"
-    //     });
-    //
-    // }, []);
-    
     const updateBoard = useCallback(async (updatedBoard?: Board, gql?: DocumentNode) => {
         if (updatedBoard) {
-            setBoards(prevBoards => prevBoards.map(board => (board.id === updatedBoard.id ? updatedBoard : board)));
+            setBoard(updatedBoard);
         }
 
         if (gql) {
@@ -92,7 +106,7 @@ export const BoardsProvider: React.FC<{ children: React.ReactNode }> = ({childre
     }, []);
 
     const refreshData = useCallback(async () => {
-        const ds = data?.boards?.map(b =>
+        const ds = boardIds?.map(b =>
             client.mutate({
                 mutation: gql`
                     mutation M {
@@ -120,10 +134,11 @@ export const BoardsProvider: React.FC<{ children: React.ReactNode }> = ({childre
             `,
         });
         await refetch();
-    }, [data, refetch]);
+    }, [boardIds, refetch]);
 
     return (
-        <BoardsContext.Provider value={{boards, updateBoard, refreshData, updateSubTask}}>
+        <BoardsContext.Provider
+            value={{board, columnNames, boardIds, updateBoard, refreshData, updateSubTask, selectBoard}}>
             {children}
         </BoardsContext.Provider>
     );
