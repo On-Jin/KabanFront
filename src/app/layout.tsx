@@ -24,7 +24,9 @@ export default function RootLayout({
         <body className={inter.className + " bg-k-light-grey text-k-black dark:bg-k-dark-grey dark:text-white"}>
         <div className="">
             <DataProvider>
-                <WaitMe>{children}</WaitMe>
+                <WaitMe>
+                    {children}
+                </WaitMe>
             </DataProvider>
         </div>
         </body>

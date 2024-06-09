@@ -1,33 +1,32 @@
-﻿import {MainTask} from "@/lib/types/MainTask";
-import KCheckbox from "@/components/KCheckbox";
+﻿import KCheckbox from "@/components/KCheckbox";
 import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {usePathname, useSearchParams,} from 'next/navigation';
-import {useBoardStore} from "@/hooks/useStore";
+import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
 
-export default function MainTaskModal({mainTask}: {
-    mainTask: MainTask,
+export default function MainTaskModal({id}: {
+    id: number,
 }) {
     const columnNames = useBoardStore((state) => state.columnNames);
     const updateSubTask = useBoardStore((state) => state.updateSubTask);
     const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
+    const mainTask = useBoardStore(selectMainTaskById)(id);
 
-    const {replace} = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    useEffect(() => {
-        // run navigation after the first render
-        const params = new URLSearchParams(searchParams?.toString());
-        params.set('mainTask', mainTask.id.toString());
-        replace(`${pathname}?${params.toString()}`);
-        return () => {
-            params.delete('mainTask');
-            replace(`${pathname}?${params.toString()}`);
-        };
-    }, [])
+    // const {replace} = useRouter();
+    // const pathname = usePathname();
+    // const searchParams = useSearchParams();
+    // useEffect(() => {
+        // const params = new URLSearchParams(searchParams?.toString());
+        // params.set('mainTask', mainTask.id.toString());
+        // replace(`${pathname}?${params.toString()}`);
+        // return () => {
+        //     params.delete('mainTask');
+        //     replace(`${pathname}?${params.toString()}`);
+        // };
+    // }, [])
 
     function setSubTaskComplete(subTaskId: number) {
         const st = mainTask.subTasks.find(subTask => subTask.id === subTaskId)!;
@@ -38,7 +37,6 @@ export default function MainTaskModal({mainTask}: {
 
     return (
         <>
-            {pathname}
             <div className="space-y-6" onClick={() => setIsMenuOpen(false)}>
                 <div className="flex justify-between">
                     <p className="heading-l">

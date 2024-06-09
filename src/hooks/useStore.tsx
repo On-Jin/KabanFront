@@ -6,11 +6,13 @@ import {GET_BOARD_BY_ID_QUERY, MOVE_MAINTASK, moveColumnMutation, moveMainTask, 
 import {arrayMove} from "@/lib/Utils";
 import {Column} from "@/lib/types/Column";
 import {produce} from "immer";
+import {MainTask} from "@/lib/types/MainTask";
 
 interface BoardState {
     board: Board,
     columnNames: string[],
-    activeId: string | null
+    activeId: string | null,
+    isLoading: boolean
 }
 
 type BoardAction = {
@@ -29,15 +31,29 @@ function generateColumnName(columns: Column[]): string[] {
     return columns.map(c => c.name);
 }
 
+export const selectMainTaskById = (state: BoardState) => (id: number) : MainTask => {
+    for (const column of state.board.columns) {
+        for (const mainTask of column.mainTasks) {
+            console.log(`${column.name} -> ${mainTask.id} === ${id}`)
+            if (mainTask.id === id) {
+                return mainTask;
+            }
+        }
+    }
+    throw new Error(`Unable to select MainTask with id ${id}`);
+};
+
 export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
     board: {id: 0, name: 'dummy', columns: []},
     columnNames: [],
     activeId: null,
+    isLoading: true,
     fetchBoard: async (id: number) => {
         const {data} = await client.query({query: GET_BOARD_BY_ID_QUERY, variables: {id}});
         set((state) => ({
             board: {...data.board},
-            columnNames: generateColumnName(data.board.columns)
+            columnNames: generateColumnName(data.board.columns),
+            isLoading: false
         }));
     },
     setActiveId: (newActiveId: string | null) => set((state) => ({activeId: newActiveId})),
@@ -84,7 +100,7 @@ export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
         set(produce((state: BoardState) => {
             state.board.columns.forEach((column) => {
                 column.mainTasks = column.mainTasks.filter((task) => {
-                    if (task.id === id) {
+                    if (task.id === id && targetColumnName != task.status) {
                         task.status = targetColumnName;
                         const targetColumnObj = state.board.columns.find((c) => c.name === targetColumnName);
                         if (targetColumnObj) {

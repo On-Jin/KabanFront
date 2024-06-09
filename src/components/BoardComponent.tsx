@@ -19,8 +19,6 @@ import {createPortal} from "react-dom";
 import {useBoardStore} from "@/hooks/useStore";
 
 const BoardComponent = React.memo(() => {
-
-
         const moveMainTask = useBoardStore((state) => state.moveMainTask);
         const updateBoard = useBoardStore((state) => state.updateBoard);
         const moveColumn = useBoardStore((state) => state.moveColumn);

@@ -3,15 +3,17 @@ import BoardComponent from "@/components/BoardComponent";
 import React, {Suspense, useCallback, useEffect, useState} from "react";
 import {useBoards} from "@/context/BoardsContext";
 import {useBoardStore} from "@/hooks/useStore";
+import ModalHandler from "@/components/ModalHandler";
 
 export default function BoardsComponent() {
     const [counter, SetCounter] = useState<number>(0);
 
-    const { boardIds, refreshData} = useBoards();
+    const {boardIds, refreshData} = useBoards();
 
-    const updateBoardStore = useBoardStore((state) => state.updateBoard);
-    const boardStore = useBoardStore((state) => state.board);
+    // const updateBoardStore = useBoardStore((state) => state.updateBoard);
+    // const boardStore = useBoardStore((state) => state.board);
     const fetchBoard = useBoardStore((state) => state.fetchBoard);
+    const isLoading = useBoardStore((state) => state.isLoading);
 
     // useEffect(() => {
     //     if (board) {
@@ -34,11 +36,14 @@ export default function BoardsComponent() {
             <button onClick={refreshData}>
                 Refresh Data
             </button>
-            <div className="touch-manipulation w-full grow flex flex-col">
-                <Suspense fallback={<div>Loading...</div>}>
-                    <BoardComponent/>
-                </Suspense>
-            </div>
+            {!isLoading &&
+                <>
+                    <div className="touch-manipulation w-full grow flex flex-col">
+                        <BoardComponent/>
+                    </div>
+                    <ModalHandler/>
+                </>
+            }
         </>
     );
 }
