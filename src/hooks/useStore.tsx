@@ -2,13 +2,26 @@
 import {Board} from "@/lib/types/Board";
 import {DocumentNode} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
-import {GET_BOARD_BY_ID_QUERY, MOVE_MAINTASK, moveColumnMutation, moveMainTask, PATCH_SUBTASK} from "@/lib/gqlMutation";
+import {
+    GET_BOARD_BY_ID_QUERY,
+    GET_BOARDS_IDS,
+    MOVE_MAINTASK,
+    moveColumnMutation,
+    moveMainTask,
+    PATCH_SUBTASK
+} from "@/lib/gqlMutation";
 import {arrayMove} from "@/lib/Utils";
 import {Column} from "@/lib/types/Column";
 import {produce} from "immer";
 import {MainTask} from "@/lib/types/MainTask";
 
+interface BoardInfoData {
+    id: number,
+    name: string,
+}
+
 interface BoardState {
+    boardIds: BoardInfoData[] | null
     board: Board,
     columnNames: string[],
     activeId: string | null,
@@ -23,6 +36,7 @@ type BoardAction = {
     fetchBoard: (id: number) => Promise<void>,
     updateSubTask: (id: number, isCompleted?: boolean, title?: string) => Promise<void>,
     editStatusMainTask: (id: number, targetColumnName: string) => Promise<void>,
+    fetchIds: () => Promise<void>,
 }
 
 const client = createApolloClient();
@@ -31,7 +45,7 @@ function generateColumnName(columns: Column[]): string[] {
     return columns.map(c => c.name);
 }
 
-export const selectMainTaskById = (state: BoardState) => (id: number) : MainTask => {
+export const selectMainTaskById = (state: BoardState) => (id: number): MainTask => {
     for (const column of state.board.columns) {
         for (const mainTask of column.mainTasks) {
             console.log(`${column.name} -> ${mainTask.id} === ${id}`)
@@ -44,10 +58,19 @@ export const selectMainTaskById = (state: BoardState) => (id: number) : MainTask
 };
 
 export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
+    boardIds: null,
     board: {id: 0, name: 'dummy', columns: []},
     columnNames: [],
     activeId: null,
     isLoading: true,
+    fetchIds: async () => {
+        const {data} = await client.query({query: GET_BOARDS_IDS});
+        set((state) => ({
+            boardIds: data.boards.map((b: Board): BoardInfoData => {
+                return {id: b.id, name: b.name}
+            })
+        }));
+    },
     fetchBoard: async (id: number) => {
         const {data} = await client.query({query: GET_BOARD_BY_ID_QUERY, variables: {id}});
         set((state) => ({

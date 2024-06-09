@@ -2,9 +2,8 @@
 import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
-import {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {usePathname, useSearchParams,} from 'next/navigation';
+import {useState} from "react";
+import {useSearchParams,} from 'next/navigation';
 import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
 
 export default function MainTaskModal({id}: {
@@ -15,22 +14,30 @@ export default function MainTaskModal({id}: {
     const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
     const mainTask = useBoardStore(selectMainTaskById)(id);
 
+    const searchParams = useSearchParams();
+
     // const {replace} = useRouter();
     // const pathname = usePathname();
     // const searchParams = useSearchParams();
     // useEffect(() => {
-        // const params = new URLSearchParams(searchParams?.toString());
-        // params.set('mainTask', mainTask.id.toString());
-        // replace(`${pathname}?${params.toString()}`);
-        // return () => {
-        //     params.delete('mainTask');
-        //     replace(`${pathname}?${params.toString()}`);
-        // };
+    // const params = new URLSearchParams(searchParams?.toString());
+    // params.set('mainTask', mainTask.id.toString());
+    // replace(`${pathname}?${params.toString()}`);
+    // return () => {
+    //     params.delete('mainTask');
+    //     replace(`${pathname}?${params.toString()}`);
+    // };
     // }, [])
 
     function setSubTaskComplete(subTaskId: number) {
         const st = mainTask.subTasks.find(subTask => subTask.id === subTaskId)!;
         updateSubTask(subTaskId, !st.isCompleted, undefined)
+    }
+
+    function setEditTaskModal() {
+        const params = new URLSearchParams(searchParams?.toString());
+        params.set('task', mainTask.id.toString());
+        window.history.pushState(null, "", `/edit-task?${params.toString()}`)
     }
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -53,7 +60,7 @@ export default function MainTaskModal({id}: {
                         {isMenuOpen && (
                             <div className="absolute left-1/2 transform -translate-x-1/2 top-[120%]
                                             rounded-lg p-4 space-y-4 w-[190px] bg-white body-l">
-                                <p className="text-k-medium-grey hover:font-bold">
+                                <p className="text-k-medium-grey hover:font-bold" onClick={setEditTaskModal}>
                                     Edit Task
                                 </p>
                                 <p className="text-k-red hover:font-bold">

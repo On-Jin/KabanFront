@@ -4,56 +4,79 @@ import {usePathname, useSearchParams,} from 'next/navigation';
 import {useEffect, useState} from 'react'
 import Modal from "@/components/Modal";
 import MainTaskModal from "@/components/MainTaskModal";
+import MainTaskEditModal from "@/components/MainTaskEditModal";
+
+const EditTask = () => {
+    return (
+        <>
+        </>
+    );
+};
+
+enum ModalState {
+    None,
+    ViewMainTask,
+    EditMainTask,
+    CreateMainTask,
+    DeleteMainTask
+}
+
+interface ModalParams {
+    ModalState: ModalState;
+    Id: number | null
+}
+
+const NoneState: ModalParams = {ModalState: ModalState.None, Id: null};
 
 const ModalHandler = () => {
     const router = useRouter()
-    // const [isModalOpen, setIsModalOpen] = useState(false)
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const {replace} = useRouter();
-    const [id, setId] = useState<number | null>(null);
+    const [modalState, setModalState] = useState<ModalParams>(NoneState);
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
 
+        if (pathname === "/edit-task") {
+            setModalState({ModalState: ModalState.EditMainTask, Id: parseInt(params.get("task")!)});
+            return;
+        }
+
         const taskParam = params.get("task");
+
         if (!taskParam) {
-            setId(null);
+            setModalState(NoneState);
             return;
         }
 
         const taskId = parseInt(taskParam);
 
         if (taskId) {
-            setId(taskId);
-        } else {
-            setId(null);
+            setModalState({ModalState: ModalState.ViewMainTask, Id: taskId});
+            return;
         }
+        setModalState(NoneState);
     }, [pathname, searchParams])
 
-    // const handleOpenModal = (taskId: number) => {
-    //     // Update URL with the task Id
-    //     router.push(`/tasks?id=${taskId}`)
-    // }
-
-    // The function to close the modal and remove the task Id from the URL
     const handleCloseModal = () => {
         const params = new URLSearchParams(searchParams?.toString());
         // setIsModalOpen(false)
-        setId(null);
+        setModalState(NoneState);
         params.delete('task');
-        replace(`${pathname}?${params.toString()}`);
+        // replace(`/?${params.toString()}`);
     }
 
     return (
         <>
-            {/*<button onClick={() => handleOpenModal(1)}>Open Modal for Task 1</button>*/}
-            <button onClick={() => handleCloseModal()}>REm</button>
+            <button onClick={() => handleCloseModal()}>Clean</button>
 
-            {id && (<div>{id}</div>)}
+            {modalState && (<div>{JSON.stringify(modalState)}</div>)}
             {/*{ isModalOpen && <MainTaskModal onClose={handleCloseModal} /> }*/}
-            <Modal isOpen={id != null} onClose={handleCloseModal}>
-                <MainTaskModal id={id!}/>
+            <Modal isOpen={modalState.ModalState != ModalState.None} onClose={handleCloseModal}>
+                {modalState.ModalState == ModalState.ViewMainTask && <MainTaskModal id={modalState.Id!}/>}
+                {modalState.ModalState == ModalState.EditMainTask && <MainTaskEditModal id={modalState.Id!}/>}
+
                 {/*<MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
             </Modal>
         </>

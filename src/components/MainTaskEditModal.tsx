@@ -6,33 +6,15 @@ import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
 import {useState} from "react";
 import KStringput from "@/components/KStringput";
-import {useBoardStore} from "@/hooks/useStore";
+import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
 
-export default function MainTaskEditModal({mainTask, setMainTask}: {
-    mainTask: MainTask,
-    setMainTask: (value: (((prevState: MainTask) => MainTask) | MainTask)) => void
+export default function MainTaskEditModal({id}: {
+    id: number,
 }) {
+    const mainTask = useBoardStore(selectMainTaskById)(id);
     const columnNames = useBoardStore((state) => state.columnNames);
 
     const [shadowMainTask, setShadowMainTask] = useState(mainTask)
-
-    // function setSubTaskComplete(subTaskId: number) {
-    //     const st = mainTask.subTasks.find(subTask => subTask.id === subTaskId)!;
-    //     st.isCompleted = !st.isCompleted;
-    //     setMainTask({...mainTask});
-    //     updateSubTask(subTaskId, st.isCompleted)
-    // }
-
-    // const columnNames: string[] = [];
-    //
-    // board!.columns.forEach((column) => {
-    //     column.mainTasks.forEach(m => {
-    //         if (m.id == mainTask.id) {
-    //             board!.columns.forEach(c => columnNames.push(c.name));
-    //         }
-    //     });
-    // });
-    //
 
     return (
         <>

@@ -1,0 +1,33 @@
+﻿'use client'
+import React, {useEffect, useState,} from "react";
+import {usePathname, useSearchParams} from "next/navigation";
+import {useParams} from 'next/navigation';
+import {useBoardStore} from "@/hooks/useStore";
+import BoardComponent from "@/components/BoardComponent";
+
+export default function BoardPage() {
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const params = useParams();
+    const [isFetching, setIsFetching] = useState(true)
+
+    const fetchBoard = useBoardStore((state) => state.fetchBoard);
+
+
+    useEffect(() => {
+        const url = pathname + (searchParams ? searchParams.toString() : "");
+        fetchBoard(parseInt(params!.boardId as string)).then(() => {
+            setIsFetching(false);
+        });
+    }, [pathname, searchParams])
+
+    return (
+        <>
+            <p>{JSON.stringify(searchParams)} | {JSON.stringify(params!.boardId)}</p>
+            {!isFetching && (
+                    <div className="touch-manipulation w-full grow flex flex-col">
+                        <BoardComponent/>
+                    </div>
+            )}
+        </>);
+}
