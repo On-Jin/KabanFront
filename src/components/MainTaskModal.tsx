@@ -3,8 +3,9 @@ import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
 import {useState} from "react";
-import {useSearchParams,} from 'next/navigation';
+import {usePathname, useRouter, useSearchParams,} from 'next/navigation';
 import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
+import {ModalState} from "@/components/ModalHandler";
 
 export default function MainTaskModal({id}: {
     id: number,
@@ -15,9 +16,9 @@ export default function MainTaskModal({id}: {
     const mainTask = useBoardStore(selectMainTaskById)(id);
 
     const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const {replace} = useRouter();
 
-    // const {replace} = useRouter();
-    // const pathname = usePathname();
     // const searchParams = useSearchParams();
     // useEffect(() => {
     // const params = new URLSearchParams(searchParams?.toString());
@@ -37,7 +38,9 @@ export default function MainTaskModal({id}: {
     function setEditTaskModal() {
         const params = new URLSearchParams(searchParams?.toString());
         params.set('task', mainTask.id.toString());
-        window.history.pushState(null, "", `/edit-task?${params.toString()}`)
+        params.set('action', ModalState.EditMainTask.toString());
+        // window.history.pushState(null, "", `/edit-task?${params.toString()}`)
+        replace(`${pathname}?${params.toString()}`);
     }
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)

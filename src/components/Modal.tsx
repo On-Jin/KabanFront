@@ -1,4 +1,4 @@
-﻿import {useEffect} from 'react';
+﻿import {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from './Modal.module.css'; // Create a CSS module for modal styling
 
@@ -9,6 +9,7 @@ const Modal = ({isOpen, onClose, children}:
                        children: React.ReactNode;
                    }
 ) => {
+    const [mouseIsDownOnModal, setMouseIsDownOnModal] = useState(false);
 
     // Use effect to handle closing the modal on escape key press
     useEffect(() => {
@@ -27,11 +28,30 @@ const Modal = ({isOpen, onClose, children}:
         <div className="fixed left-0 right-0 bottom-0 top-0 w-full h-full
                         bg-opacity-50 bg-k-black
                         z-40
-                        flex items-center justify-center" onMouseDown={(e) => e.stopPropagation()} onClick={(e) => {
-            e.stopPropagation();
-            onClose()
-        }}>
-            <div className="bg-white w-full h-fit m-4 p-6 rounded-lg md:w-[480px]" onClick={(e) => e.stopPropagation()}>
+                        flex items-center justify-center"
+             onMouseUp={(e) => {
+                 e.stopPropagation();
+                 if (!mouseIsDownOnModal) {
+                     onClose();
+                 } else {
+                     setMouseIsDownOnModal(false);
+                 }
+             }}
+             onClick={(e) => {
+                 e.stopPropagation();
+             }}
+        >
+            <div className="bg-white w-full h-fit m-4 p-6 rounded-lg md:w-[480px]"
+                 onClick={(e) => e.stopPropagation()}
+                 onMouseUp={(e) => {
+                     e.stopPropagation();
+                     if (mouseIsDownOnModal)
+                         setMouseIsDownOnModal(false)
+                 }}
+                 onMouseDown={(e) => {
+                     setMouseIsDownOnModal(true)
+                 }}
+            >
                 {children}
             </div>
         </div>,

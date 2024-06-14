@@ -1,8 +1,7 @@
 import type {Metadata} from "next";
 import {Plus_Jakarta_Sans} from "next/font/google";
 import "@/app/globals.css";
-import {DataProvider, useData} from "@/context/DataContext";
-
+import {DataProvider} from "@/context/DataContext";
 import WaitMe from "@/shared/WaitMe";
 import SwitchTheme from "@/components/switch-theme";
 import React from "react";
@@ -29,8 +28,6 @@ export default function RootLayout({
             <DataProvider>
                 <WaitMe>
                     <SwitchTheme/>
-                    {/*<BoardsComponent/>*/}
-                    <ModalHandler/>
                     <>
                         {children}
                     </>

@@ -13,7 +13,7 @@ const EditTask = () => {
     );
 };
 
-enum ModalState {
+export enum ModalState {
     None,
     ViewMainTask,
     EditMainTask,
@@ -37,22 +37,21 @@ const ModalHandler = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
-
-        if (pathname === "/edit-task") {
-            setModalState({ModalState: ModalState.EditMainTask, Id: parseInt(params.get("task")!)});
-            return;
-        }
-
+        const actionParam = params.get("action");
         const taskParam = params.get("task");
-
-        if (!taskParam) {
+        if (actionParam == null || taskParam == null) {
             setModalState(NoneState);
             return;
         }
 
         const taskId = parseInt(taskParam);
 
-        if (taskId) {
+        if (actionParam === ModalState.EditMainTask.toString()) {
+            setModalState({ModalState: ModalState.EditMainTask, Id: taskId});
+            return;
+        }
+
+        if (actionParam === ModalState.ViewMainTask.toString()) {
             setModalState({ModalState: ModalState.ViewMainTask, Id: taskId});
             return;
         }
@@ -64,7 +63,8 @@ const ModalHandler = () => {
         // setIsModalOpen(false)
         setModalState(NoneState);
         params.delete('task');
-        // replace(`/?${params.toString()}`);
+        params.delete('action');
+        replace(`${pathname}?${params.toString()}`);
     }
 
     return (

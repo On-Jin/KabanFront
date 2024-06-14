@@ -4,6 +4,7 @@ import {usePathname, useSearchParams} from "next/navigation";
 import {useParams} from 'next/navigation';
 import {useBoardStore} from "@/hooks/useStore";
 import BoardComponent from "@/components/BoardComponent";
+import ModalHandler from "@/components/ModalHandler";
 
 export default function BoardPage() {
     const pathname = usePathname();
@@ -25,9 +26,12 @@ export default function BoardPage() {
         <>
             <p>{JSON.stringify(searchParams)} | {JSON.stringify(params!.boardId)}</p>
             {!isFetching && (
+                <>
                     <div className="touch-manipulation w-full grow flex flex-col">
                         <BoardComponent/>
                     </div>
+                    <ModalHandler/>
+                </>
             )}
         </>);
 }

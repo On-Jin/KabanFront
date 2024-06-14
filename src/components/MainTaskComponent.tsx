@@ -9,6 +9,7 @@ import MainTaskModal from "@/components/MainTaskModal";
 import MainTaskEditModal from "@/components/MainTaskEditModal";
 import {useBoardStore} from "@/hooks/useStore";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {ModalState} from "@/components/ModalHandler";
 
 export default function MainTaskComponent({mainTask, isDragElement}: {
     mainTask: MainTask,
@@ -31,6 +32,7 @@ export default function MainTaskComponent({mainTask, isDragElement}: {
     function setUrl() {
         const params = new URLSearchParams(searchParams?.toString());
         params.set('task', mainTask.id.toString());
+        params.set('action', ModalState.ViewMainTask.toString());
         replace(`${pathname}?${params.toString()}`);
     }
 
