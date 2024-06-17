@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.10.4",
+    "@apollo/client": "^3.10.5",
     "@dnd-kit/sortable": "^8.0.0",
+    "@types/isomorphic-fetch": "^0.0.39",
     "@types/js-cookie": "^3.0.6",
     "clsx": "^2.1.1",
-    "graphql": "^16.8.1",
+    "graphql": "^16.8.2",
     "immer": "^10.1.1",
+    "isomorphic-fetch": "^3.0.0",
     "js-cookie": "^3.0.5",
     "next": "14.2.3",
     "react": "^18",
@@ -24,14 +26,19 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.7",
+    "@graphql-codegen/typescript-operations": "^4.2.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18",
+    "apollo": "^2.34.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.4.5"
   }
 }

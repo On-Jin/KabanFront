@@ -1,6 +1,107 @@
 ﻿import {gql, TypedDocumentNode} from "@apollo/client";
 import {Board} from "@/lib/types/Board";
 
+
+export const DELETE_SUBTASKS = gql`
+    mutation DeleteSubTasks($input: DeleteSubTasksInput!) {
+        deleteSubTasks(input: $input) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }`;
+
+export const ADD_SUBTASKS = gql`
+    mutation AddSubTasks($input: AddSubTasksInput!) {
+        addSubTasks(input: $input) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }`;
+
+export const PATCH_MAINTASK = gql`
+    mutation PatchMainTask($input: PatchMainTaskInput!) {
+        patchMainTask(input: $input) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }`;
+
+export const UPDATE_MAINTASK = gql`
+    mutation UpdateMainTask(
+        $inputDeleteSubTasks: DeleteSubTasksInput!,
+        $inputAddSubTasks: AddSubTasksInput!,
+        $inputPatchMainTask: PatchMainTaskInput!) {
+        deleteSubTasks(input: $inputDeleteSubTasks) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+
+        addSubTasks(input: $inputAddSubTasks) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+
+        patchMainTask(input: $inputPatchMainTask) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }
+`;
+
 export function moveColumnMutation(columnId: number, index: number) {
     return gql`
         mutation {

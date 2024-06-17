@@ -1,0 +1,9 @@
+﻿overwrite: true
+schema: http://localhost:5264/graphql  # Replace with your Hot Chocolate GraphQL endpoint
+documents: 'src/**/*.{gql,graphql}'
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'

@@ -2,26 +2,32 @@
 import {setContext} from "@apollo/client/link/context";
 import Cookies from "js-cookie";
 import {removeTypenameFromVariables} from '@apollo/client/link/remove-typename';
-// import {cookies} from "next/headers";
+import { BatchHttpLink } from "@apollo/client/link/batch-http";
 
 
 const removeTypenameLink = removeTypenameFromVariables();
 
+const batchLink = new BatchHttpLink({
+    uri: "/api/graphql/",
+    batchMax: 5, // No more than 5 operations per batch
+    batchInterval: 20 // Wait no more than 20ms after first batched operation,
+});
+
 const httpLink = createHttpLink({
     uri: "/api/graphql/",
-    credentials: 'include'
+    credentials: 'include',
 });
 
 let authLink: ApolloLink;
 
-export const refreshAuthLink = () => {
+const refreshAuthLink = () => {
     authLink = setContext((_, {headers}) => {
         const token = Cookies.get(".AspNetCore.Cookies")
         // const token = cookies().get(".AspNetCore.Cookies");
-        console.log(Cookies.get());
-        console.log(token);
-        console.log("_____");
-        console.log(headers);
+        // console.log(Cookies.get());
+        // console.log(token);
+        // console.log("_____");
+        // console.log(headers);
         return {
             headers: {
                 ...headers,
@@ -43,6 +49,10 @@ const defaultOptions: DefaultOptions = {
         fetchPolicy: 'no-cache',
         errorPolicy: 'all',
     },
+    mutate: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+    }
 };
 
 const createApolloClient = () => {

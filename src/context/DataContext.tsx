@@ -1,7 +1,7 @@
 ﻿'use client';
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
-import createApolloClient, {refreshAuthLink} from "@/lib/ApolloClient";
+import createApolloClient from "@/lib/ApolloClient";
 
 interface DataContextType {
     data: any;
@@ -29,8 +29,6 @@ export const DataProvider = ({children}: DataProviderProps) => {
             const result = await response.json();
             setData(result);
             setLoading(false);
-            console.log(result);
-            // refreshAuthLink();
             client = createApolloClient();
         };
 

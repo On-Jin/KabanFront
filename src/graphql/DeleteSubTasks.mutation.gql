@@ -1,0 +1,15 @@
+﻿mutation DeleteSubTasks($input: DeleteSubTasksInput!) {
+    deleteSubTasks(input: $input) {
+        mainTask {
+            description
+            id
+            status
+            title
+            subTasks {
+                id
+                isCompleted
+                title
+            }
+        }
+    }
+}

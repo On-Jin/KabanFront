@@ -1,4 +1,6 @@
-﻿export enum KButtonType {
+﻿import {forwardRef} from "react";
+
+export enum KButtonType {
     Primary = 'primary',
     Secondary = 'secondary',
     Destructive = 'destructive',
@@ -33,24 +35,41 @@ function GetClassKButtonType(buttonType: KButtonType): string {
     return " ";
 }
 
-export default function KButton({children, buttonType = KButtonType.Primary, buttonSize = KButtonSize.Large, onClick}: {
+interface KButtonProps {
     children: string,
     buttonType?: KButtonType,
     buttonSize?: KButtonSize,
-    onClick?: () => void
-}) {
-
-    return (
-        <div
-            className={
-                " flex justify-center items-center" +
-                " px-8 rounded-full font-bold" +
-                GetClassKButtonType(buttonType) +
-                GetClassKButtonSize(buttonSize)
-            }
-            onClick={() => onClick?.()}
-        >
-            {children}
-        </div>
-    );
+    disabled?: boolean
+    onClick?: () => void,
 }
+
+const KButton =
+    forwardRef<HTMLInputElement, KButtonProps>(
+        function KButton(
+            {
+                children,
+                buttonType = KButtonType.Primary,
+                buttonSize = KButtonSize.Large,
+                disabled,
+                onClick,
+            }
+        ) {
+            return (
+                <div
+                    className={
+                        " flex justify-center items-center" +
+                        " px-8 rounded-full font-bold" +
+                        GetClassKButtonType(buttonType) +
+                        GetClassKButtonSize(buttonSize)
+                    }
+                    onClick={() => {
+                        if (disabled != null && !disabled)
+                            onClick?.()
+                    }}
+                >
+                    {children}
+                </div>
+            );
+        });
+
+export default KButton

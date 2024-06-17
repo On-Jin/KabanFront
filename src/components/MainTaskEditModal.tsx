@@ -1,15 +1,24 @@
 ﻿import KDropDown from "@/components/KDropDown";
-import {useState} from "react";
 import KStringput from "@/components/KStringput";
 import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
-import {useForm, FormProvider, useFormContext, SubmitHandler} from "react-hook-form"
+import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
+import {useState} from "react";
 
-export type Inputs = {
-    example: string,
-    exampleRequired: string,
+export type InputSubTask = {
+    // Can be the real id or fake id depend on isNew field
+    id: number,
+    title: string,
+    isNew: boolean,
+}
+
+export type InputEditTask = {
+    title: string,
+    description: string,
+    status: string,
+    subtasks: InputSubTask[];
 };
 
 export default function MainTaskEditModal({id}: {
@@ -17,13 +26,43 @@ export default function MainTaskEditModal({id}: {
 }) {
     const mainTask = useBoardStore(selectMainTaskById)(id);
     const columnNames = useBoardStore((state) => state.columnNames);
+    const editMainTask = useBoardStore((state) => state.editMainTask);
+    const [isProcess, setIsProcess] = useState(false);
 
-    const [shadowMainTask, setShadowMainTask] = useState(mainTask)
 
-    const {register, handleSubmit, watch, formState: {errors}} = useForm<Inputs>();
-    const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+    const {register, setValue, control, handleSubmit, watch, formState: {errors}} = useForm<InputEditTask>(
+        {
+            defaultValues: {
+                title: mainTask.title,
+                description: mainTask.description,
+                status: mainTask.status,
+                subtasks: mainTask.subTasks.map(s => ({
+                    id: s.id,
+                    title: s.title,
+                    isNew: false
+                }))
+            }
+        }
+    );
 
-    console.log(watch("example")) // watch input value by passing the name of it
+    const {fields, append, prepend, remove, swap, move, insert, replace}
+        = useFieldArray({
+        control,
+        name: "subtasks"
+    });
+
+    const onSubmit: SubmitHandler<InputEditTask> = async data => {
+        console.log("SUBMIT")
+        setIsProcess(true)
+        const newSubTasks = data.subtasks.filter(s => s.isNew);
+        const deletedSubTaskIds = mainTask.subTasks
+            .filter(s => !data.subtasks.some(dataS => dataS.isNew || dataS.id === s.id))
+            .map(s => s.id);
+        editMainTask(mainTask.id, data.title, data.description, data.status, deletedSubTaskIds, newSubTasks.map(s => s.title))
+            .then(() => {
+                setIsProcess(false);
+            });
+    };
 
     return (
         <>
@@ -34,69 +73,41 @@ export default function MainTaskEditModal({id}: {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <p className="body-m text-k-medium-grey">Title</p>
-                        <KStringput inputText={shadowMainTask.title} onChangeInput={value => {
-                            setShadowMainTask({...shadowMainTask, title: value});
-                        }}/>
+                        <KStringput {...register("title", {required: true})}/>
                     </div>
                     <div>
                         <p className="body-m text-k-medium-grey">Description</p>
-                        <KStringput<Inputs>
-                            register={register}
+                        <KStringput
+                            isError={errors.description}
+                            {...register("description", {required: false})}
                             className="break-words h-28"
-                            inputText={shadowMainTask.description}
-                            onChangeInput={value => {
-                                setShadowMainTask({...shadowMainTask, description: value});
-                            }}
-                            canBeEmpty={true}
-                            exampleValue={"e.g. It’s always good to take a break. This \n15 minute break will  recharge the batteries \na little."}/>
+                            placeholder={"e.g. It’s always good to take a break. This \n15 minute break will  recharge the batteries \na little."}/>
+                        {errors.description && <span>This field is required</span>}
                     </div>
                     <div>
                         <p className="body-m text-k-medium-grey">Subtaks</p>
-                        {shadowMainTask.subTasks.map(subTask => (
-                            <>
-                                <div className="flex items-center gap-x-4">
-                                    <KStringput
-                                        className="grow"
-                                        inputText={subTask.title}
-                                        onChangeInput={value => {
-                                            setShadowMainTask({
-                                                ...shadowMainTask,
-                                                subTasks: shadowMainTask.subTasks.map((s) => {
-                                                    if (s === subTask) {
-                                                        return {
-                                                            ...s,
-                                                            title: value,
-                                                        };
-                                                    }
-                                                    return s;
-                                                }),
-                                            });
-                                        }}
-                                        exampleValue={"..."}/>
+                        {fields.map((subTask, index) => (
+                            <div key={subTask.id} className="flex items-center gap-x-4">
+                                <KStringput
+                                    className="grow"
+                                    {...register(`subtasks.${index}.title`, {required: true})}
+                                    isError={errors.subtasks?.[index] as FieldError}
+                                    placeholder={"..."}/>
 
-                                    <Image
-                                        className="h-full w-4 hover:brightness-0"
-                                        src={crossIcon}
-                                        alt="remove subtask"
-                                        onClick={() => {
-                                            setShadowMainTask({
-                                                ...shadowMainTask,
-                                                subTasks: shadowMainTask.subTasks.filter(s => s !== subTask),
-                                            });
-                                        }}
-                                    />
-                                </div>
-                            </>
+                                <Image
+                                    className="h-full w-4 hover:brightness-0"
+                                    src={crossIcon}
+                                    alt="remove subtask"
+                                    onClick={() => remove(index)}
+                                />
+                            </div>
                         ))}
 
                         <KButton
                             buttonSize={KButtonSize.Small}
                             buttonType={KButtonType.Secondary}
                             onClick={() => {
-                                shadowMainTask.subTasks.push({id: 0, isCompleted: false, title: ""})
-                                setShadowMainTask({
-                                    ...shadowMainTask,
-                                });
+                                append({title: "", id: Math.max(...fields.map(f => f.id)) + 1, isNew: true});
                             }}
                         >
                             + Add New Task
@@ -104,12 +115,19 @@ export default function MainTaskEditModal({id}: {
                     </div>
                     <div>
                         <p className="body-m text-k-medium-grey">Status</p>
-                        <KDropDown value={mainTask.status} options={columnNames} onChange={() => {
-                        }}/>
+                        <KDropDown
+                            {...register("status")}
+                            value={watch("status")}
+                            options={columnNames}
+                            onChange={(value) => setValue("status", value)}
+                        />
                     </div>
 
+                    <div>qwewqe {isProcess ? "isP" : "not"}</div>
                     <KButton
                         buttonSize={KButtonSize.Small}
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={isProcess}
                     >
                         Save Changes
                     </KButton>

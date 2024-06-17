@@ -3,12 +3,14 @@ import {Board} from "@/lib/types/Board";
 import {DocumentNode} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
 import {
+    ADD_SUBTASKS,
+    DELETE_SUBTASKS,
     GET_BOARD_BY_ID_QUERY,
     GET_BOARDS_IDS,
     MOVE_MAINTASK,
     moveColumnMutation,
-    moveMainTask,
-    PATCH_SUBTASK
+    moveMainTask, PATCH_MAINTASK,
+    PATCH_SUBTASK, UPDATE_MAINTASK
 } from "@/lib/gqlMutation";
 import {arrayMove} from "@/lib/Utils";
 import {Column} from "@/lib/types/Column";
@@ -37,6 +39,7 @@ type BoardAction = {
     updateSubTask: (id: number, isCompleted?: boolean, title?: string) => Promise<void>,
     editStatusMainTask: (id: number, targetColumnName: string) => Promise<void>,
     fetchIds: () => Promise<void>,
+    editMainTask: (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => Promise<void>,
 }
 
 const client = createApolloClient();
@@ -48,7 +51,6 @@ function generateColumnName(columns: Column[]): string[] {
 export const selectMainTaskById = (state: BoardState) => (id: number): MainTask => {
     for (const column of state.board.columns) {
         for (const mainTask of column.mainTasks) {
-            console.log(`${column.name} -> ${mainTask.id} === ${id}`)
             if (mainTask.id === id) {
                 return mainTask;
             }
@@ -81,8 +83,39 @@ export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
     },
     setActiveId: (newActiveId: string | null) => set((state) => ({activeId: newActiveId})),
 
-    // patchSubTask: async () => {
-    // },
+    editMainTask: async (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => {
+        const inputDeleteSubTasks = {
+            ids: deletedSubTaskIds != null ? deletedSubTaskIds : [],
+        };
+        const inputAddSubTasks = {
+            mainTaskId: id,
+            titles: addedSubTaskTitles != null ? addedSubTaskTitles : []
+        };
+
+        let inputPatchMainTask = null;
+        if (title != null || description != null)
+            inputPatchMainTask = {id, title, description}
+
+        if (inputDeleteSubTasks.ids.length > 0) {
+            await client.mutate({
+                mutation: DELETE_SUBTASKS, variables: {input: inputDeleteSubTasks},
+            });
+        }
+        if (inputAddSubTasks.titles.length > 0) {
+            await client.mutate({
+                mutation: ADD_SUBTASKS, variables: {input: inputAddSubTasks},
+            });
+        }
+        await client.mutate({
+            mutation: PATCH_MAINTASK, variables: {input: inputPatchMainTask},
+        });
+        if (status != null) {
+            await client.mutate({
+                mutation: MOVE_MAINTASK, variables: {id, status: status},
+            });
+        }
+
+    },
     updateSubTask: async (id: number, isCompleted?: boolean, title?: string) => {
         set(produce((state: BoardState) => {
             state.board.columns.forEach(c => {
