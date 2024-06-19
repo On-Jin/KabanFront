@@ -1,17 +1,12 @@
 ﻿'use client'
 import {useRouter} from 'next/navigation'
 import {usePathname, useSearchParams,} from 'next/navigation';
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import Modal from "@/components/Modal";
 import MainTaskModal from "@/components/MainTaskModal";
 import MainTaskEditModal from "@/components/MainTaskEditModal";
-
-const EditTask = () => {
-    return (
-        <>
-        </>
-    );
-};
+import {CSSTransition} from "react-transition-group";
+import ReactDOM from "react-dom";
 
 export enum ModalState {
     None,
@@ -34,6 +29,9 @@ const ModalHandler = () => {
     const pathname = usePathname();
     const {replace} = useRouter();
     const [modalState, setModalState] = useState<ModalParams>(NoneState);
+    const [previousModalState, setPreviousModalState] = useState<ModalParams>(NoneState);
+
+    const ref = useRef(null);
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
@@ -45,6 +43,7 @@ const ModalHandler = () => {
         }
 
         const taskId = parseInt(taskParam);
+
 
         if (actionParam === ModalState.EditMainTask.toString()) {
             setModalState({ModalState: ModalState.EditMainTask, Id: taskId});
@@ -60,26 +59,41 @@ const ModalHandler = () => {
 
     const handleCloseModal = () => {
         const params = new URLSearchParams(searchParams?.toString());
-        // setIsModalOpen(false)
+        setPreviousModalState(modalState);
         setModalState(NoneState);
         params.delete('task');
         params.delete('action');
         replace(`${pathname}?${params.toString()}`);
     }
 
-    return (
-        <>
-            <button onClick={() => handleCloseModal()}>Clean</button>
+    const renderModalContent = (state: ModalParams) => {
+        switch (state.ModalState) {
+            case ModalState.ViewMainTask:
+                return <MainTaskModal id={state.Id!}/>;
+            case ModalState.EditMainTask:
+                return <MainTaskEditModal id={state.Id!}/>;
+            default:
+                return null;
+        }
+    };
 
-            {modalState && (<div>{JSON.stringify(modalState)}</div>)}
-            {/*{ isModalOpen && <MainTaskModal onClose={handleCloseModal} /> }*/}
-            <Modal isOpen={modalState.ModalState != ModalState.None} onClose={handleCloseModal}>
-                {modalState.ModalState == ModalState.ViewMainTask && <MainTaskModal id={modalState.Id!}/>}
-                {modalState.ModalState == ModalState.EditMainTask && <MainTaskEditModal id={modalState.Id!}/>}
-
-                {/*<MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
-            </Modal>
-        </>
+    return ReactDOM.createPortal(
+        <div>
+            <CSSTransition
+                in={modalState.ModalState != ModalState.None}
+                timeout={400}
+                nodeRef={ref}
+                classNames="fade"
+                unmountOnExit
+                appear
+                onExited={() => setPreviousModalState(NoneState)}
+            >
+                <Modal ref={ref} onClose={handleCloseModal}>
+                    {renderModalContent(modalState) || renderModalContent(previousModalState)}
+                </Modal>
+            </CSSTransition>
+        </div>,
+        document.body
     )
 }
 
