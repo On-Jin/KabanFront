@@ -1,4 +1,5 @@
-﻿import {forwardRef} from "react";
+﻿import React, {forwardRef, ReactNode} from "react";
+import clsx from "clsx";
 
 export enum KButtonType {
     Primary = 'primary',
@@ -23,52 +24,51 @@ function GetClassKButtonSize(buttonSize: KButtonSize): string {
 function GetClassKButtonType(buttonType: KButtonType): string {
     switch (buttonType) {
         case KButtonType.Primary:
-            return " text-white bg-k-purple hover:bg-kh-purple";
+            return " text-white bg-k-purple enabled:hover:bg-kh-purple";
         case KButtonType.Secondary:
             return (
-                " text-k-purple bg-k-purple bg-opacity-10 hover:bg-opacity-25" +
-                " dark:bg-white dark:hover:bg-opacity-95"
+                " text-k-purple bg-k-purple bg-opacity-10 enabled:hover:bg-opacity-25" +
+                " dark:bg-white dark:enabled:hover:bg-opacity-95"
             );
         case KButtonType.Destructive:
-            return " text-white bg-k-red hover:bg-kh-red";
+            return " text-white bg-k-red hover:enabled:bg-kh-red";
     }
     return " ";
 }
 
-interface KButtonProps {
-    children: string,
+interface KButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    children: ReactNode,
     buttonType?: KButtonType,
     buttonSize?: KButtonSize,
-    disabled?: boolean
-    onClick?: () => void,
 }
 
 const KButton =
-    forwardRef<HTMLInputElement, KButtonProps>(
+    forwardRef<HTMLButtonElement, KButtonProps>(
         function KButton(
             {
                 children,
                 buttonType = KButtonType.Primary,
                 buttonSize = KButtonSize.Large,
-                disabled,
-                onClick,
-            }
+                ...rest
+            },
+            ref
         ) {
             return (
-                <div
-                    className={
-                        " flex justify-center items-center" +
-                        " px-8 rounded-full font-bold" +
-                        GetClassKButtonType(buttonType) +
-                        GetClassKButtonSize(buttonSize)
-                    }
-                    onClick={() => {
-                        if (disabled != null && !disabled)
-                            onClick?.()
-                    }}
+                <button
+                    type="button"
+                    ref={ref}
+                    {...rest}
+                    className={clsx(
+                        `w-full flex justify-center items-center \
+                        px-8 rounded-full font-bold \
+                        disabled:opacity-50 \
+                        ${GetClassKButtonType(buttonType)} \
+                        ${GetClassKButtonSize(buttonSize)} `,
+                        {}
+                    )}
                 >
                     {children}
-                </div>
+                </button>
             );
         });
 

@@ -7,6 +7,7 @@ import MainTaskModal from "@/components/MainTaskModal";
 import MainTaskEditModal from "@/components/MainTaskEditModal";
 import {CSSTransition} from "react-transition-group";
 import ReactDOM from "react-dom";
+import MainTaskCreateModal from "@/components/MainTaskCreateModal";
 
 export enum ModalState {
     None,
@@ -44,17 +45,26 @@ const ModalHandler = () => {
 
         const taskId = parseInt(taskParam);
 
-
-        if (actionParam === ModalState.EditMainTask.toString()) {
-            setModalState({ModalState: ModalState.EditMainTask, Id: taskId});
-            return;
+        const actionModalState = parseInt(actionParam) as ModalState;
+        switch (actionModalState) {
+            case ModalState.None:
+                setModalState(NoneState);
+                return;
+            case ModalState.ViewMainTask:
+                setModalState({ModalState: ModalState.ViewMainTask, Id: taskId});
+                return;
+            case ModalState.EditMainTask:
+                setModalState({ModalState: ModalState.EditMainTask, Id: taskId});
+                return;
+            case ModalState.CreateMainTask:
+                setModalState({ModalState: ModalState.CreateMainTask, Id: taskId});
+                return;
+            case ModalState.DeleteMainTask:
+                setModalState(NoneState);
+                return;
+            default:
+                setModalState(NoneState);
         }
-
-        if (actionParam === ModalState.ViewMainTask.toString()) {
-            setModalState({ModalState: ModalState.ViewMainTask, Id: taskId});
-            return;
-        }
-        setModalState(NoneState);
     }, [pathname, searchParams])
 
     const handleCloseModal = () => {
@@ -72,6 +82,8 @@ const ModalHandler = () => {
                 return <MainTaskModal id={state.Id!}/>;
             case ModalState.EditMainTask:
                 return <MainTaskEditModal id={state.Id!}/>;
+            case ModalState.CreateMainTask:
+                return <MainTaskCreateModal id={state.Id!}/>;
             default:
                 return null;
         }

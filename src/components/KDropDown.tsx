@@ -2,19 +2,34 @@
 import Image from "next/image";
 import iconChevronDown from "/public/icon-chevron-down.svg";
 import iconChevronUp from "/public/icon-chevron-up.svg";
-import React, {forwardRef, useState} from "react";
+import React, {forwardRef, useEffect, useRef, useState} from "react";
+import clsx from "clsx";
+import {FieldError} from "react-hook-form";
 
 interface KDropDownProps {
     className?: string,
     value: string,
     options: string[],
+    disabled?: boolean,
+    error?: FieldError | undefined
     onChange: (newValue: string) => void
 }
 
 const KDropDown = forwardRef<HTMLSelectElement, KDropDownProps>(
-    function KDropDown({className, value, options, onChange}) {
-
+    function KDropDown({className, value, options, onChange, error, disabled}) {
         const [isOpen, setIsOpen] = useState(false);
+        const dropdownRef = useRef<HTMLDivElement>(null);
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        useEffect(() => {
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, []);
 
         const optionsRendered = options.map(o => {
             return (
@@ -31,7 +46,15 @@ const KDropDown = forwardRef<HTMLSelectElement, KDropDownProps>(
             );
         });
         return (
-            <div className={"relative body-l " + className}>
+            <div
+                ref={dropdownRef}
+                className={
+                    clsx(`relative body-l ${className}`,
+                        {"": error},
+                        {"pointer-events-none opacity-50": disabled}
+                    )
+                }
+            >
                 <div
                     className={"cursor-pointer select-none px-4 py-2 rounded border-[1px] border-solid border-k-medium-grey w-full text-k-black dark:text-white focus:outline-none appearance-none" +
                         (isOpen ? " border-k-purple" : " hover:bg-k-medium-grey hover:bg-opacity-5 border-opacity-25")}

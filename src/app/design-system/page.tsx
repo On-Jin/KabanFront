@@ -153,6 +153,45 @@ enum LocalTaskState {
     Done = "Done",
 }
 
+const renderButtons = (disabled: boolean) => (
+    <div className="interactive-button flex flex-row items-center space-x-4">
+        <div className="w-full">
+            <KButton disabled={disabled}>
+                Button Primary (L)
+            </KButton>
+        </div>
+
+        <div className="w-full">
+            <KButton
+                disabled={disabled}
+                buttonSize={KButtonSize.Small}
+            >
+                Button Primary (S)
+            </KButton>
+        </div>
+
+        <div className="w-full">
+            <KButton
+                disabled={disabled}
+                buttonType={KButtonType.Secondary}
+                buttonSize={KButtonSize.Small}
+            >
+                Button Secondary
+            </KButton>
+        </div>
+
+        <div className="w-full">
+            <KButton
+                disabled={disabled}
+                buttonType={KButtonType.Destructive}
+                buttonSize={KButtonSize.Small}
+            >
+                Button Destructive
+            </KButton>
+        </div>
+    </div>
+);
+
 export default function DesignSystem() {
 
     const [checkbox, setCheckbox] = useState(true);
@@ -164,39 +203,9 @@ export default function DesignSystem() {
 
     const interactivePanel = (
         <div className="space-y-8">
-            <div className="interactive-button flex flex-row items-center space-x-4">
-                <div className="w-full">
-                    <KButton>
-                        Button Primary (L)
-                    </KButton>
-                </div>
 
-                <div className="w-full">
-                    <KButton
-                        buttonSize={KButtonSize.Small}
-                    >
-                        Button Primary (S)
-                    </KButton>
-                </div>
-
-                <div className="w-full">
-                    <KButton
-                        buttonType={KButtonType.Secondary}
-                        buttonSize={KButtonSize.Small}
-                    >
-                        Button Secondary
-                    </KButton>
-                </div>
-
-                <div className="w-full">
-                    <KButton
-                        buttonType={KButtonType.Destructive}
-                        buttonSize={KButtonSize.Small}
-                    >
-                        Button Destructive
-                    </KButton>
-                </div>
-            </div>
+            {renderButtons(false)}
+            {renderButtons(true)}
 
             <div className="flex space-x-8">
                 <div className="interactive-checkbox space-y-4 w-full">
@@ -211,9 +220,12 @@ export default function DesignSystem() {
                 <div className="interactive-stringput space-y-4 w-full">
                     <div className="text-k-medium-grey body-m dark:text-white">Text Field</div>
 
-                    <KStringput inputText={inputText} onChangeInput={value => setInputText(value)}/>
+                    <KStringput
+                        onChange={event  => setInputText(event.target.value)}
+                        value={inputText}
+                    />
 
-                    <KStringput inputText={""}/>
+                    <KStringput/>
                 </div>
 
                 <div className="interactive-dropdown space-y-4 w-full">

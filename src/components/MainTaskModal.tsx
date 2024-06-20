@@ -13,26 +13,16 @@ export default function MainTaskModal({id}: {
     const columnNames = useBoardStore((state) => state.columnNames);
     const updateSubTask = useBoardStore((state) => state.updateSubTask);
     const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
+    const deleteMainTask = useBoardStore((state) => state.deleteMainTask);
     const mainTask = useBoardStore(selectMainTaskById)(id);
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const {replace} = useRouter();
 
-    // const searchParams = useSearchParams();
-    // useEffect(() => {
-    // const params = new URLSearchParams(searchParams?.toString());
-    // params.set('mainTask', mainTask.id.toString());
-    // replace(`${pathname}?${params.toString()}`);
-    // return () => {
-    //     params.delete('mainTask');
-    //     replace(`${pathname}?${params.toString()}`);
-    // };
-    // }, [])
-
     function setSubTaskComplete(subTaskId: number) {
         const st = mainTask.subTasks.find(subTask => subTask.id === subTaskId)!;
-        updateSubTask(subTaskId, !st.isCompleted, undefined)
+        updateSubTask(subTaskId, !st.isCompleted, undefined);
     }
 
     function setEditTaskModal() {
@@ -41,6 +31,11 @@ export default function MainTaskModal({id}: {
         params.set('action', ModalState.EditMainTask.toString());
         // window.history.pushState(null, "", `/edit-task?${params.toString()}`)
         replace(`${pathname}?${params.toString()}`);
+    }
+
+    async function deleteMainTaskHandler() {
+        await deleteMainTask(mainTask.id);
+        replace(`${pathname}`);
     }
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -66,7 +61,7 @@ export default function MainTaskModal({id}: {
                                 <p className="text-k-medium-grey hover:font-bold" onClick={setEditTaskModal}>
                                     Edit Task
                                 </p>
-                                <p className="text-k-red hover:font-bold">
+                                <p className="text-k-red hover:font-bold" onClick={deleteMainTaskHandler}>
                                     Delete Task
                                 </p>
                             </div>

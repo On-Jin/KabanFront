@@ -5,7 +5,6 @@ import {DataProvider} from "@/context/DataContext";
 import WaitMe from "@/shared/WaitMe";
 import SwitchTheme from "@/components/switch-theme";
 import React from "react";
-import ModalHandler from "@/components/ModalHandler";
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
 

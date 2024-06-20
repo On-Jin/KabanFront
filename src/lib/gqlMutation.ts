@@ -19,6 +19,23 @@ export const DELETE_SUBTASKS = gql`
         }
     }`;
 
+export const ADD_MAINTASK = gql`
+    mutation AddMainTask($input: AddMainTaskInput!) {
+        addMainTask(input: $input) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }`;
+
 export const ADD_SUBTASKS = gql`
     mutation AddSubTasks($input: AddSubTasksInput!) {
         addSubTasks(input: $input) {
@@ -188,12 +205,29 @@ interface Data {
     boards: Board[];
 }
 
+export const DELETE_MAINTASK = gql`
+    mutation DeleteMaiNTask($id: Int!) {
+        deleteSubTask(input: { id: $id }) {
+            mainTask {
+                description
+                id
+                status
+                title
+                subTasks {
+                    id
+                    isCompleted
+                    title
+                }
+            }
+        }
+    }
+`;
+
 export const PATCH_SUBTASK = gql`
     mutation PatchSubTask($id: Int!, $isCompleted: Boolean, $title: String) {
         patchSubTask(input: { id: $id, isCompleted: $isCompleted, title: $title }) {
-            board {
+            subTask {
                 id
-                name
             }
         }
     }

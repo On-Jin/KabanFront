@@ -3,7 +3,8 @@ import {Board} from "@/lib/types/Board";
 import {DocumentNode} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
 import {
-    ADD_SUBTASKS,
+    ADD_MAINTASK,
+    ADD_SUBTASKS, DELETE_MAINTASK,
     DELETE_SUBTASKS,
     GET_BOARD_BY_ID_QUERY,
     GET_BOARDS_IDS,
@@ -40,6 +41,8 @@ type BoardAction = {
     editStatusMainTask: (id: number, targetColumnName: string) => Promise<void>,
     fetchIds: () => Promise<void>,
     editMainTask: (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => Promise<void>,
+    addMainTask: (title: string, description?: string, status?: string, subTaskTitles?: string[]) => Promise<void>,
+    deleteMainTask: (id: number) => Promise<void>,
 }
 
 const client = createApolloClient();
@@ -59,7 +62,7 @@ export const selectMainTaskById = (state: BoardState) => (id: number): MainTask 
     throw new Error(`Unable to select MainTask with id ${id}`);
 };
 
-export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
+export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     boardIds: null,
     board: {id: 0, name: 'dummy', columns: []},
     columnNames: [],
@@ -74,6 +77,7 @@ export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
         }));
     },
     fetchBoard: async (id: number) => {
+        console.log("fetchboard")
         const {data} = await client.query({query: GET_BOARD_BY_ID_QUERY, variables: {id}});
         set((state) => ({
             board: {...data.board},
@@ -83,6 +87,50 @@ export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
     },
     setActiveId: (newActiveId: string | null) => set((state) => ({activeId: newActiveId})),
 
+    deleteMainTask: async (id: number) => {
+        await client.mutate({mutation: DELETE_MAINTASK, variables: {id},});
+    },
+    addMainTask: async (title: string, description?: string, status?: string, subTaskTitles?: string[]) => {
+        const {board} = get();
+
+        const column = board.columns.find(c => c.name === status);
+
+        if (!column) {
+            throw new Error(`AddMainTask : Status (column name) ${status} does not exist.`)
+        }
+
+        const {data} = await client.mutate({
+            mutation: ADD_MAINTASK, variables: {
+                input: {
+                    columnId: column.id,
+                    description: description,
+                    title: title,
+                    subTaskTitles
+                }
+            },
+        });
+
+        console.log("IWJEPIWHJERIP")
+        console.log(JSON.stringify(data));
+        // const inputAddSubTasks = {
+        //     mainTaskId: id,
+        //     titles: addedSubTaskTitles != null ? addedSubTaskTitles : []
+        // };
+        //
+        // if (inputAddSubTasks.titles.length > 0) {
+        //     await client.mutate({
+        //         mutation: ADD_SUBTASKS, variables: {input: inputAddSubTasks},
+        //     });
+        // }
+        // await client.mutate({
+        //     mutation: PATCH_MAINTASK, variables: {input: inputPatchMainTask},
+        // });
+        // if (status != null) {
+        //     await client.mutate({
+        //         mutation: MOVE_MAINTASK, variables: {id, status: status},
+        //     });
+        // }
+    },
     editMainTask: async (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => {
         const inputDeleteSubTasks = {
             ids: deletedSubTaskIds != null ? deletedSubTaskIds : [],
@@ -133,7 +181,10 @@ export const useBoardStore = create<BoardState & BoardAction>()((set) => ({
                 });
             });
         }));
-        await client.mutate({mutation: PATCH_SUBTASK, variables: {id, isCompleted, title}});
+        await client.mutate({
+            mutation: PATCH_SUBTASK,
+            variables: {id, isCompleted, title}
+        }).catch(error => console.log(JSON.stringify(error)));
     },
     moveColumn: async (columnId: number, toIndex: number) => {
         // shallow copy

@@ -1,22 +1,22 @@
 ﻿import KDropDown from "@/components/KDropDown";
 import KStringput from "@/components/KStringput";
-import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
+import {useBoardStore} from "@/hooks/useStore";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
 import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
 import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import KProcessing from "@/components/KProcessing";
+import {MainTask} from "@/lib/types/MainTask";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
+import KProcessing from "@/components/KProcessing";
 
-export default function MainTaskEditModal({id}: {
-    id: number,
-}) {
-    const mainTask = useBoardStore(selectMainTaskById)(id);
-    const columnNames = useBoardStore((state) => state.columnNames);
-    const editMainTask = useBoardStore((state) => state.editMainTask);
+export default function MainTaskCreateModal() {
     const [isProcess, setIsProcess] = useState(false);
+
+    const columnNames = useBoardStore((state) => state.columnNames);
+    const mainTask: MainTask = {description: "", id: 0, status: columnNames[0], subTasks: [], title: ""};
+    const addMainTask = useBoardStore((state) => state.addMainTask);
     const {replace} = useRouter();
     const pathname = usePathname();
 
@@ -43,13 +43,8 @@ export default function MainTaskEditModal({id}: {
     });
 
     const onSubmit: SubmitHandler<InputMainTask> = async data => {
-        console.log("SUBMIT")
         setIsProcess(true)
-        const newSubTasks = data.subtasks.filter(s => s.isNew);
-        const deletedSubTaskIds = mainTask.subTasks
-            .filter(s => !data.subtasks.some(dataS => dataS.isNew || dataS.id === s.id))
-            .map(s => s.id);
-        editMainTask(mainTask.id, data.title, data.description, data.status, deletedSubTaskIds, newSubTasks.map(s => s.title))
+        addMainTask(data.title, data.description, data.status, data.subtasks.map(s => s.title))
             .then(() => {
                 setIsProcess(false);
                 replace(pathname!);
@@ -58,10 +53,10 @@ export default function MainTaskEditModal({id}: {
 
     return (
         <>
-            <button onClick={() => setIsProcess(!isProcess)}>switch {`${isProcess}`}</button>
             <div className="space-y-6">
+                <button onClick={() => setIsProcess(!isProcess)}>switch {`${isProcess}`}</button>
                 <p className="heading-l">
-                    Edit Task
+                    Create Task
                 </p>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
@@ -93,6 +88,7 @@ export default function MainTaskEditModal({id}: {
                                     placeholder={"..."}
                                     {...register(`subtasks.${index}.title`, {required: true})}
                                 />
+
 
                                 <button
                                     className="disabled:opacity-50 group"
@@ -129,7 +125,6 @@ export default function MainTaskEditModal({id}: {
                             onChange={(value) => setValue("status", value)}
                         />
                     </div>
-
 
                     <KButton
                         buttonSize={KButtonSize.Small}
