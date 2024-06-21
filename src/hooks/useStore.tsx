@@ -32,6 +32,7 @@ interface BoardState {
 }
 
 type BoardAction = {
+    selectMainTaskById: (id: number) => MainTask,
     updateBoard: (updatedBoard?: BoardState['board'], gql?: DocumentNode) => void,
     moveColumn: (columnId: number, toIndex: number) => void,
     moveMainTask: (fromIndex: number, toIndex: number, targetColumn: Column, mainTaskId: number, updateState: boolean) => void,
@@ -51,23 +52,24 @@ function generateColumnName(columns: Column[]): string[] {
     return columns.map(c => c.name);
 }
 
-export const selectMainTaskById = (state: BoardState) => (id: number): MainTask => {
-    for (const column of state.board.columns) {
-        for (const mainTask of column.mainTasks) {
-            if (mainTask.id === id) {
-                return mainTask;
-            }
-        }
-    }
-    throw new Error(`Unable to select MainTask with id ${id}`);
-};
-
 export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     boardIds: null,
     board: {id: 0, name: 'dummy', columns: []},
     columnNames: [],
     activeId: null,
     isLoading: true,
+    selectMainTaskById: (id: number): MainTask => {
+        const {board} = get();
+
+        for (const column of board.columns) {
+            for (const mainTask of column.mainTasks) {
+                if (mainTask.id === id) {
+                    return mainTask;
+                }
+            }
+        }
+        throw new Error(`Unable to select MainTask with id ${id}`);
+    },
     fetchIds: async () => {
         const {data} = await client.query({query: GET_BOARDS_IDS});
         set((state) => ({

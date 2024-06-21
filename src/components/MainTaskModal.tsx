@@ -4,20 +4,21 @@ import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
 import {useEffect, useRef, useState} from "react";
 import {usePathname, useRouter, useSearchParams,} from 'next/navigation';
-import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
+import {useBoardStore} from "@/hooks/useStore";
 import {ModalState} from "@/components/ModalHandler";
 import KProcessing from "@/components/KProcessing";
 import clsx from "clsx";
 import usePointerEvents from "@/hooks/usePointerEvents";
+import {MainTask} from "@/lib/types/MainTask";
 
-export default function MainTaskModal({id}: {
-    id: number,
+export default function MainTaskModal({mainTask, onClose}: {
+    mainTask: MainTask,
+    onClose: () => void
 }) {
     const columnNames = useBoardStore((state) => state.columnNames);
     const updateSubTask = useBoardStore((state) => state.updateSubTask);
     const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
     const deleteMainTask = useBoardStore((state) => state.deleteMainTask);
-    const mainTask = useBoardStore(selectMainTaskById)(id);
     const [isDeleteProcess, setIsDeleteProcess] = useState(false)
     usePointerEvents(isDeleteProcess);
 
@@ -41,7 +42,8 @@ export default function MainTaskModal({id}: {
     async function deleteMainTaskHandler() {
         setIsDeleteProcess(true);
         await deleteMainTask(mainTask.id);
-        replace(`${pathname}`);
+        // replace(`${pathname}`);
+        onClose();
         setIsDeleteProcess(false);
     }
 

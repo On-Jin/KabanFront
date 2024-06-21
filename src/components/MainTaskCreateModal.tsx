@@ -12,14 +12,13 @@ import {InputMainTask} from "@/lib/forms/InputMainTask";
 import KProcessing from "@/components/KProcessing";
 import usePointerEvents from "@/hooks/usePointerEvents";
 
-export default function MainTaskCreateModal() {
+export default function MainTaskCreateModal({onClose}: {
+    onClose: () => void
+}) {
     const [isProcess, setIsProcess] = useState(false);
-
     const columnNames = useBoardStore((state) => state.columnNames);
     const mainTask: MainTask = {description: "", id: 0, status: columnNames[0], subTasks: [], title: ""};
     const addMainTask = useBoardStore((state) => state.addMainTask);
-    const {replace} = useRouter();
-    const pathname = usePathname();
     usePointerEvents(isProcess);
 
 
@@ -49,7 +48,8 @@ export default function MainTaskCreateModal() {
         addMainTask(data.title, data.description, data.status, data.subtasks.map(s => s.title))
             .then(() => {
                 setIsProcess(false);
-                replace(pathname!);
+                // replace(pathname!);
+                onClose();
             });
     };
 

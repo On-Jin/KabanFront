@@ -8,6 +8,8 @@ import MainTaskEditModal from "@/components/MainTaskEditModal";
 import {CSSTransition} from "react-transition-group";
 import ReactDOM from "react-dom";
 import MainTaskCreateModal from "@/components/MainTaskCreateModal";
+import {MainTask} from "@/lib/types/MainTask";
+import {useBoardStore} from "@/hooks/useStore";
 
 export enum ModalState {
     None,
@@ -17,20 +19,23 @@ export enum ModalState {
     DeleteMainTask
 }
 
-interface ModalParams {
+interface ModalData {
     ModalState: ModalState;
-    Id: number | null
+    Id: number | null;
+    MainTask: MainTask | null;
 }
 
-const NoneState: ModalParams = {ModalState: ModalState.None, Id: null};
+
+const NoneData: ModalData = {ModalState: ModalState.None, Id: null, MainTask: null};
 
 const ModalHandler = () => {
-    const router = useRouter()
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const {replace} = useRouter();
-    const [modalState, setModalState] = useState<ModalParams>(NoneState);
-    const [previousModalState, setPreviousModalState] = useState<ModalParams>(NoneState);
+    const [modalState, setModalState] = useState<ModalData>(NoneData);
+    const [previousModalState, setPreviousModalState] = useState<ModalData>(NoneData);
+    const selectMainTaskById = useBoardStore((state) => state.selectMainTaskById);
+
 
     const ref = useRef(null);
 
@@ -39,7 +44,7 @@ const ModalHandler = () => {
         const actionParam = params.get("action");
         const taskParam = params.get("task");
         if (actionParam == null || taskParam == null) {
-            setModalState(NoneState);
+            setModalState(NoneData);
             return;
         }
 
@@ -48,42 +53,43 @@ const ModalHandler = () => {
         const actionModalState = parseInt(actionParam) as ModalState;
         switch (actionModalState) {
             case ModalState.None:
-                setModalState(NoneState);
+                setModalState(NoneData);
                 return;
             case ModalState.ViewMainTask:
-                setModalState({ModalState: ModalState.ViewMainTask, Id: taskId});
+
+                setModalState({ModalState: ModalState.ViewMainTask, Id: taskId, MainTask: selectMainTaskById(taskId)});
                 return;
             case ModalState.EditMainTask:
-                setModalState({ModalState: ModalState.EditMainTask, Id: taskId});
+                setModalState({ModalState: ModalState.EditMainTask, Id: taskId, MainTask: selectMainTaskById(taskId)});
                 return;
             case ModalState.CreateMainTask:
-                setModalState({ModalState: ModalState.CreateMainTask, Id: taskId});
+                setModalState({ModalState: ModalState.CreateMainTask, Id: taskId, MainTask: null});
                 return;
             case ModalState.DeleteMainTask:
-                setModalState(NoneState);
+                setModalState(NoneData);
                 return;
             default:
-                setModalState(NoneState);
+                setModalState(NoneData);
         }
     }, [pathname, searchParams])
 
     const handleCloseModal = () => {
         const params = new URLSearchParams(searchParams?.toString());
         setPreviousModalState(modalState);
-        setModalState(NoneState);
+        setModalState(NoneData);
         params.delete('task');
         params.delete('action');
         replace(`${pathname}?${params.toString()}`);
     }
 
-    const renderModalContent = (state: ModalParams) => {
+    const renderModalContent = (state: ModalData) => {
         switch (state.ModalState) {
             case ModalState.ViewMainTask:
-                return <MainTaskModal id={state.Id!}/>;
+                return <MainTaskModal mainTask={state.MainTask!} onClose={handleCloseModal}/>;
             case ModalState.EditMainTask:
-                return <MainTaskEditModal id={state.Id!}/>;
+                return <MainTaskEditModal mainTask={state.MainTask!} onClose={handleCloseModal}/>;
             case ModalState.CreateMainTask:
-                return <MainTaskCreateModal />;
+                return <MainTaskCreateModal onClose={handleCloseModal}/>;
             default:
                 return null;
         }
@@ -98,7 +104,7 @@ const ModalHandler = () => {
                 classNames="fade"
                 unmountOnExit
                 appear
-                onExited={() => setPreviousModalState(NoneState)}
+                onExited={() => setPreviousModalState(NoneData)}
             >
                 <Modal ref={ref} onClose={handleCloseModal}>
                     {renderModalContent(modalState) || renderModalContent(previousModalState)}

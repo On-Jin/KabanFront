@@ -1,25 +1,23 @@
 ﻿import KDropDown from "@/components/KDropDown";
 import KStringput from "@/components/KStringput";
-import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
+import {useBoardStore} from "@/hooks/useStore";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
 import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
 import {useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
 import KProcessing from "@/components/KProcessing";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
 import usePointerEvents from "@/hooks/usePointerEvents";
+import {MainTask} from "@/lib/types/MainTask";
 
-export default function MainTaskEditModal({id}: {
-    id: number,
+export default function MainTaskEditModal({mainTask, onClose}: {
+    mainTask: MainTask,
+    onClose: () => void
 }) {
-    const mainTask = useBoardStore(selectMainTaskById)(id);
     const columnNames = useBoardStore((state) => state.columnNames);
     const editMainTask = useBoardStore((state) => state.editMainTask);
     const [isProcess, setIsProcess] = useState(false);
-    const {replace} = useRouter();
-    const pathname = usePathname();
     usePointerEvents(isProcess);
 
 
@@ -54,7 +52,8 @@ export default function MainTaskEditModal({id}: {
         editMainTask(mainTask.id, data.title, data.description, data.status, deletedSubTaskIds, newSubTasks.map(s => s.title))
             .then(() => {
                 setIsProcess(false);
-                replace(pathname!);
+                // replace(pathname!);
+                onClose();
             });
     };
 

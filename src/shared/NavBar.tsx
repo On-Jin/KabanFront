@@ -6,11 +6,15 @@ import iconVerticalEllipsis from '/public/icon-vertical-ellipsis.svg';
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
 import {useData} from "@/context/DataContext";
 import {useBoardStore} from "@/hooks/useStore";
-import KButton, {KButtonType} from "@/components/KButton";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {ModalState} from "@/components/ModalHandler";
+import React from "react";
 
-export default function NavBar() {
+interface Props {
+    switchIsMenuOpen: React.Dispatch<React.SetStateAction<void>>;
+}
+
+export default function NavBar(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
     const searchParams = useSearchParams();
@@ -48,6 +52,7 @@ export default function NavBar() {
                 <li className="my-auto">
                     <button
                         className="heading-l flex flex-row space-x-2"
+                        onClick={() => props.switchIsMenuOpen()}
                     >
                         <h2 className="block">
                             Platform Launch
