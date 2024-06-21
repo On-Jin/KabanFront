@@ -83,7 +83,7 @@ const ModalHandler = () => {
             case ModalState.EditMainTask:
                 return <MainTaskEditModal id={state.Id!}/>;
             case ModalState.CreateMainTask:
-                return <MainTaskCreateModal id={state.Id!}/>;
+                return <MainTaskCreateModal />;
             default:
                 return null;
         }

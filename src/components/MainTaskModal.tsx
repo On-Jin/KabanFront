@@ -2,10 +2,13 @@
 import KDropDown from "@/components/KDropDown";
 import iconVerticalEllipsis from "/public/icon-vertical-ellipsis.svg";
 import Image from "next/image";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {usePathname, useRouter, useSearchParams,} from 'next/navigation';
 import {selectMainTaskById, useBoardStore} from "@/hooks/useStore";
 import {ModalState} from "@/components/ModalHandler";
+import KProcessing from "@/components/KProcessing";
+import clsx from "clsx";
+import usePointerEvents from "@/hooks/usePointerEvents";
 
 export default function MainTaskModal({id}: {
     id: number,
@@ -15,6 +18,9 @@ export default function MainTaskModal({id}: {
     const editStatusMainTask = useBoardStore((state) => state.editStatusMainTask);
     const deleteMainTask = useBoardStore((state) => state.deleteMainTask);
     const mainTask = useBoardStore(selectMainTaskById)(id);
+    const [isDeleteProcess, setIsDeleteProcess] = useState(false)
+    usePointerEvents(isDeleteProcess);
+
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -29,28 +35,49 @@ export default function MainTaskModal({id}: {
         const params = new URLSearchParams(searchParams?.toString());
         params.set('task', mainTask.id.toString());
         params.set('action', ModalState.EditMainTask.toString());
-        // window.history.pushState(null, "", `/edit-task?${params.toString()}`)
         replace(`${pathname}?${params.toString()}`);
     }
 
     async function deleteMainTaskHandler() {
+        setIsDeleteProcess(true);
         await deleteMainTask(mainTask.id);
         replace(`${pathname}`);
+        setIsDeleteProcess(false);
     }
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const menuRef = useRef<HTMLButtonElement>(null);
+    const handleClickOutside = (event: MouseEvent) => {
+        if (!isDeleteProcess && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            setIsMenuOpen(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isDeleteProcess]);
 
     return (
         <>
-            <div className="space-y-6" onClick={() => setIsMenuOpen(false)}>
+            <div
+                className={clsx('space-y-6', {"opacity-50": isDeleteProcess})}
+            >
                 <div className="flex justify-between">
                     <p className="heading-l">
                         {mainTask.title}
                     </p>
-                    <div className="relative px-4 self-center z-10" onClick={(e) => {
-                        e.stopPropagation();
-                        setIsMenuOpen(!isMenuOpen);
-                    }}>
+                    <button
+                        type="button"
+                        className="relative px-4 self-center z-10"
+                        ref={menuRef}
+                        disabled={isDeleteProcess}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsMenuOpen(!isMenuOpen);
+                        }}
+                    >
                         <Image
                             className="w-[5px] h-auto"
                             src={iconVerticalEllipsis} alt="task menu"
@@ -58,31 +85,47 @@ export default function MainTaskModal({id}: {
                         {isMenuOpen && (
                             <div className="absolute left-1/2 transform -translate-x-1/2 top-[120%]
                                             rounded-lg p-4 space-y-4 w-[190px] bg-white body-l">
-                                <p className="text-k-medium-grey hover:font-bold" onClick={setEditTaskModal}>
+                                <p className="text-k-medium-grey hover:enabled:font-bold w-full flex justify-center"
+                                   onClick={setEditTaskModal}>
                                     Edit Task
                                 </p>
-                                <p className="text-k-red hover:font-bold" onClick={deleteMainTaskHandler}>
-                                    Delete Task
-                                </p>
+
+                                <button type="button"
+                                        disabled={isDeleteProcess}
+                                        className="text-k-red hover:enabled:font-bold w-full flex justify-center"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteMainTaskHandler();
+                                        }}>
+                                    {isDeleteProcess ? <KProcessing/> : 'Delete Task'}
+                                </button>
                             </div>
                         )}
-                    </div>
+                    </button>
                 </div>
                 <p className="body-l text-k-medium-grey">{mainTask.description}</p>
                 <div>
                     <p className="body-m text-k-medium-grey">Subtasks (0 of 3)</p>
                     <div>
                         {mainTask.subTasks.map(s => (
-                            <KCheckbox key={s.id} value={s.isCompleted}
-                                       updateCheckbox={() => setSubTaskComplete(s.id)}>{s.title}{s.id}</KCheckbox>))}
+                            <KCheckbox
+                                key={s.id}
+                                value={s.isCompleted}
+                                updateCheckbox={() => setSubTaskComplete(s.id)}>{s.title}{s.id}
+                            </KCheckbox>
+                        ))}
 
                     </div>
                 </div>
                 <div>
                     <p className="body-m text-k-medium-grey">Current Status</p>
-                    <KDropDown value={mainTask.status} options={columnNames} onChange={(e) => {
-                        editStatusMainTask(mainTask.id, e);
-                    }}/>
+                    <KDropDown
+                        value={mainTask.status}
+                        options={columnNames}
+                        disabled={isDeleteProcess}
+                        onChange={(e) => {
+                            editStatusMainTask(mainTask.id, e);
+                        }}/>
                 </div>
             </div>
         </>

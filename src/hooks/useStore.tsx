@@ -88,7 +88,12 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     setActiveId: (newActiveId: string | null) => set((state) => ({activeId: newActiveId})),
 
     deleteMainTask: async (id: number) => {
-        await client.mutate({mutation: DELETE_MAINTASK, variables: {id},});
+        try {
+            await new Promise(f => setTimeout(f, 2000));
+            await client.mutate({mutation: DELETE_MAINTASK, variables: {id},});
+        } catch (e) {
+            console.error(JSON.stringify(e))
+        }
     },
     addMainTask: async (title: string, description?: string, status?: string, subTaskTitles?: string[]) => {
         const {board} = get();

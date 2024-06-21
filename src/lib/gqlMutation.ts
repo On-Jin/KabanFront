@@ -207,7 +207,7 @@ interface Data {
 
 export const DELETE_MAINTASK = gql`
     mutation DeleteMaiNTask($id: Int!) {
-        deleteSubTask(input: { id: $id }) {
+        deleteMainTask(input: { id: $id }) {
             mainTask {
                 description
                 id
