@@ -9,6 +9,7 @@ import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
 import KProcessing from "@/components/KProcessing";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
+import usePointerEvents from "@/hooks/usePointerEvents";
 
 export default function MainTaskEditModal({id}: {
     id: number,
@@ -19,6 +20,7 @@ export default function MainTaskEditModal({id}: {
     const [isProcess, setIsProcess] = useState(false);
     const {replace} = useRouter();
     const pathname = usePathname();
+    usePointerEvents(isProcess);
 
 
     const {register, setValue, control, handleSubmit, watch, formState: {errors}} = useForm<InputMainTask>(

@@ -114,27 +114,7 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
                 }
             },
         });
-
-        console.log("IWJEPIWHJERIP")
-        console.log(JSON.stringify(data));
-        // const inputAddSubTasks = {
-        //     mainTaskId: id,
-        //     titles: addedSubTaskTitles != null ? addedSubTaskTitles : []
-        // };
-        //
-        // if (inputAddSubTasks.titles.length > 0) {
-        //     await client.mutate({
-        //         mutation: ADD_SUBTASKS, variables: {input: inputAddSubTasks},
-        //     });
-        // }
-        // await client.mutate({
-        //     mutation: PATCH_MAINTASK, variables: {input: inputPatchMainTask},
-        // });
-        // if (status != null) {
-        //     await client.mutate({
-        //         mutation: MOVE_MAINTASK, variables: {id, status: status},
-        //     });
-        // }
+        // TODO
     },
     editMainTask: async (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => {
         const inputDeleteSubTasks = {

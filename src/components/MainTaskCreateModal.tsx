@@ -10,6 +10,7 @@ import {usePathname, useRouter} from "next/navigation";
 import {MainTask} from "@/lib/types/MainTask";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
 import KProcessing from "@/components/KProcessing";
+import usePointerEvents from "@/hooks/usePointerEvents";
 
 export default function MainTaskCreateModal() {
     const [isProcess, setIsProcess] = useState(false);
@@ -19,6 +20,7 @@ export default function MainTaskCreateModal() {
     const addMainTask = useBoardStore((state) => state.addMainTask);
     const {replace} = useRouter();
     const pathname = usePathname();
+    usePointerEvents(isProcess);
 
 
     const {register, setValue, control, handleSubmit, watch, formState: {errors}} = useForm<InputMainTask>(
