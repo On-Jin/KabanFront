@@ -3,7 +3,7 @@ import {Plus_Jakarta_Sans} from "next/font/google";
 import "@/app/globals.css";
 import {DataProvider} from "@/context/DataContext";
 import WaitMe from "@/shared/WaitMe";
-import SwitchTheme from "@/components/switch-theme";
+import SwitchTheme from "@/components/SwitchTheme";
 import React from "react";
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
