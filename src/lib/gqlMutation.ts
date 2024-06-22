@@ -19,6 +19,32 @@ export const DELETE_SUBTASKS = gql`
         }
     }`;
 
+export const ADD_BOARD = gql`
+    mutation AddBoard($input: AddBoardInput!) {
+        addBoard(input: $input) {
+            board {
+                id
+                name
+                columns {
+                    id
+                    name
+                    mainTasks {
+                        description
+                        id
+                        status
+                        title
+                        subTasks {
+                            id
+                            isCompleted
+                            title
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export const ADD_COLUMN = gql`
     mutation AddColumn($input: AddColumnInput!) {
         addColumn(input: $input) {

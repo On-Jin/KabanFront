@@ -10,6 +10,7 @@ import ReactDOM from "react-dom";
 import MainTaskCreateModal from "@/components/MainTaskCreateModal";
 import {MainTask} from "@/lib/types/MainTask";
 import {useBoardStore} from "@/hooks/useStore";
+import BoardCreateModal from "@/components/BoardCreateModal";
 
 export enum ModalState {
     None,
@@ -97,7 +98,7 @@ const ModalHandler = () => {
             case ModalState.CreateMainTask:
                 return <MainTaskCreateModal onClose={handleCloseModal}/>;
             case ModalState.CreateBoard:
-                return <>Create B</>;
+                return <BoardCreateModal onClose={handleCloseModal}/>;
             default:
                 return null;
         }
