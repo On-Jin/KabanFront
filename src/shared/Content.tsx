@@ -9,15 +9,16 @@ import {CSSTransition} from "react-transition-group";
 import Link from "next/link";
 
 export default function Content({children}: { children: React.ReactNode }) {
-    const [isMenuOpen, setIsMenuOpen] = useState(true);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const boardInfos = useBoardStore((state) => state.boardIds);
     const board = useBoardStore((state) => state.board);
-    // const fetchBoard = useBoardStore((state) => state.fetchBoard);
-    const {ref} = useClickOutside<HTMLDivElement>(setIsMenuOpen);
+    const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen);
 
     return (
         <div className="flex flex-col min-h-screen">
-            <NavBar switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}/>
+            <NavBar addRef={addRef}
+                    switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
+                    isMenuOpen={isMenuOpen}/>
             <main className="relative flex flex-col items-center grow">
                 <CSSTransition
                     in={isMenuOpen}
@@ -34,12 +35,14 @@ export default function Content({children}: { children: React.ReactNode }) {
                                     text-k-medium-grey"
                     >
                         <div
-                            ref={ref}
+                            ref={(el) => {
+                                if (el) addRef(el);
+                            }}
                             className="bg-white py-4 m-4 pr-6 rounded-lg max-w-[325px]"
                         >
                             <p className="heading-s pb-5 pl-6">ALL BOARDS ({boardInfos?.length})</p>
                             <menu className="heading-m [&>*]:pl-6">
-                                {boardInfos?.map((b, i) => (
+                                {boardInfos?.map(b => (
                                     <li key={b.id}
                                         className={clsx("py-3.5 pr-14 rounded-r-full", {
                                             "bg-k-purple text-white": b.id === board.id

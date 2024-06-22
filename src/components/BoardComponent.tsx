@@ -223,7 +223,7 @@ const BoardComponent = React.memo(() => {
         const dragElement = generateActiveDragElement();
 
         return (
-            <div className="flex flex-col grow">
+            <div className="flex flex-col grow pt-6">
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleDragStart}

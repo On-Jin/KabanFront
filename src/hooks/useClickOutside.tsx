@@ -2,10 +2,10 @@
 
 
 const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetStateAction<any>>) => {
-    const ref = useRef<T>(null);
+    const refs = useRef<T[]>([]);
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (ref.current && !ref.current.contains(event.target as Node)) {
+        if (!refs.current.some(ref => ref && ref.contains(event.target as Node))) {
             set(false);
         }
     };
@@ -17,7 +17,13 @@ const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetS
         };
     }, []);
 
-    return {ref};
+    const addRef = (el: T) => {
+        if (el && !refs.current.includes(el)) {
+            refs.current.push(el);
+        }
+    };
+
+    return {refs, addRef};
 };
 
 export default useClickOutside;

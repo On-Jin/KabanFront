@@ -9,9 +9,12 @@ import {useBoardStore} from "@/hooks/useStore";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {ModalState} from "@/components/ModalHandler";
 import React from "react";
+import clsx from "clsx";
 
 interface Props {
+    isMenuOpen: boolean,
     switchIsMenuOpen: React.Dispatch<React.SetStateAction<void>>;
+    addRef: (el: HTMLElement) => void;
 }
 
 export default function NavBar(props: Props) {
@@ -51,8 +54,17 @@ export default function NavBar(props: Props) {
                 </li>
                 <li className="my-auto">
                     <button
-                        className="heading-l flex flex-row space-x-2"
-                        onClick={() => props.switchIsMenuOpen()}
+                        ref={(el) => {
+                            if (el) props.addRef(el);
+                        }}
+                        className={clsx("heading-l flex flex-row space-x-2", {
+                            // "pointer-events-none cursor-pointer": props.isMenuOpen
+                        })}
+                        onClick={() => {
+                            props.switchIsMenuOpen();
+                        }}
+                        onMouseUp={() => {}}
+                        onMouseDown={() => {}}
                     >
                         <h2 className="block">
                             {board.id == 0 ? "Kaban" : board.name}
