@@ -7,12 +7,14 @@ import {ReactSVG} from 'react-svg'
 import useClickOutside from "@/hooks/useClickOutside";
 import {CSSTransition} from "react-transition-group";
 import Link from "next/link";
+import useSetUrl from "@/hooks/useSetUrl";
 
 export default function Content({children}: { children: React.ReactNode }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const boardInfos = useBoardStore((state) => state.boardIds);
     const board = useBoardStore((state) => state.board);
     const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen);
+    const {setAddBoardUrl} = useSetUrl();
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -62,7 +64,15 @@ export default function Content({children}: { children: React.ReactNode }) {
                                     className={clsx("flex items-center gap-x-3 py-3.5 pr-14 rounded-r-full")}
                                 >
                                     <ReactSVG className={clsx("w-4 h-4 fill-k-purple")} src="/icon-board.svg"/>
-                                    <span className="text-k-purple">+ Create New Board</span>
+                                    <button
+                                        className="text-k-purple"
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            setAddBoardUrl();
+                                        }}
+                                    >
+                                        + Create New Board
+                                    </button>
                                 </li>
                             </menu>
                             <SwitchTheme className="ml-4 mt-4"/>

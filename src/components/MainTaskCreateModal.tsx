@@ -6,7 +6,6 @@ import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
 import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
 import {useState} from "react";
-import {usePathname, useRouter} from "next/navigation";
 import {MainTask} from "@/lib/types/MainTask";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
 import KProcessing from "@/components/KProcessing";
@@ -48,7 +47,6 @@ export default function MainTaskCreateModal({onClose}: {
         addMainTask(data.title, data.description, data.status, data.subtasks.map(s => s.title))
             .then(() => {
                 setIsProcess(false);
-                // replace(pathname!);
                 onClose();
             });
     };

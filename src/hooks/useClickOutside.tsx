@@ -17,7 +17,7 @@ const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetS
         };
     }, []);
 
-    const addRef = (el: T) => {
+    const addRef = (el: T | null) => {
         if (el && !refs.current.includes(el)) {
             refs.current.push(el);
         }

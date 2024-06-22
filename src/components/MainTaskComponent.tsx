@@ -1,53 +1,23 @@
 ﻿import {MainTask} from "@/lib/types/MainTask";
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
-import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
+import {DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import clsx from "clsx";
-import Modal from "@/components/Modal";
-import {useEffect, useState} from "react";
-import MainTaskModal from "@/components/MainTaskModal";
-import MainTaskEditModal from "@/components/MainTaskEditModal";
 import {useBoardStore} from "@/hooks/useStore";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {ModalState} from "@/components/ModalHandler";
+import useSetUrl from "@/hooks/useSetUrl";
 
 export default function MainTaskComponent({mainTask, isDragElement}: {
     mainTask: MainTask,
     isDragElement: boolean
 }) {
-    const {replace} = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    // useEffect(() => {
-    //     // run navigation after the first render
-    //     const params = new URLSearchParams(searchParams?.toString());
-    //     params.set('mainTask', mainTask.id.toString());
-    //     replace(`${pathname}?${params.toString()}`);
-    //     return () => {
-    //         params.delete('mainTask');
-    //         replace(`${pathname}?${params.toString()}`);
-    //     };
-    // }, [])
 
-    function setUrl() {
-        const params = new URLSearchParams(searchParams?.toString());
-        params.set('task', mainTask.id.toString());
-        params.set('action', ModalState.ViewMainTask.toString());
-        replace(`${pathname}?${params.toString()}`);
-    }
+    const {setViewMainTaskUrl} = useSetUrl();
 
     const activeId = useBoardStore((state) => state.activeId);
 
-    // const [mainTask, setMainTask] = useState(initialMainTask);
-
-    const [isModalOpen, setModalOpen] = useState(false);
-
-    const handleOpenModal = function()
-    {
-        setModalOpen(true);
-        setUrl();
+    const handleOpenModal = function () {
+        setViewMainTaskUrl(mainTask.id);
     };
-    const handleCloseModal = () => setModalOpen(false);
 
     const {
         attributes,
@@ -94,10 +64,6 @@ export default function MainTaskComponent({mainTask, isDragElement}: {
                 <p className="body-m text-k-medium-grey">
                     0 of {mainTask.subTasks.length} substasks [{mainTask.id}]
                 </p>
-                {/*<Modal isOpen={isModalOpen} onClose={handleCloseModal}>*/}
-                {/*<MainTaskModal mainTask={mainTask}/>*/}
-                {/*<MainTaskEditModal mainTask={mainTask} setMainTask={setMainTask}/>*/}
-                {/*</Modal>*/}
             </div>
         </div>
     );

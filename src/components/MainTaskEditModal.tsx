@@ -52,7 +52,6 @@ export default function MainTaskEditModal({mainTask, onClose}: {
         editMainTask(mainTask.id, data.title, data.description, data.status, deletedSubTaskIds, newSubTasks.map(s => s.title))
             .then(() => {
                 setIsProcess(false);
-                // replace(pathname!);
                 onClose();
             });
     };

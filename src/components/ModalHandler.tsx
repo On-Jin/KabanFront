@@ -16,7 +16,8 @@ export enum ModalState {
     ViewMainTask,
     EditMainTask,
     CreateMainTask,
-    DeleteMainTask
+    DeleteMainTask,
+    CreateBoard
 }
 
 interface ModalData {
@@ -42,13 +43,14 @@ const ModalHandler = () => {
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
         const actionParam = params.get("action");
-        const taskParam = params.get("task");
-        if (actionParam == null || taskParam == null) {
+        const idParam = params.get("id");
+
+        if (actionParam == null) {
             setModalState(NoneData);
             return;
         }
 
-        const taskId = parseInt(taskParam);
+        const id = idParam ? parseInt(idParam) : null;
 
         const actionModalState = parseInt(actionParam) as ModalState;
         switch (actionModalState) {
@@ -56,28 +58,32 @@ const ModalHandler = () => {
                 setModalState(NoneData);
                 return;
             case ModalState.ViewMainTask:
-
-                setModalState({ModalState: ModalState.ViewMainTask, Id: taskId, MainTask: selectMainTaskById(taskId)});
+                if (id == null) break;
+                setModalState({ModalState: ModalState.ViewMainTask, Id: id, MainTask: selectMainTaskById(id)});
                 return;
             case ModalState.EditMainTask:
-                setModalState({ModalState: ModalState.EditMainTask, Id: taskId, MainTask: selectMainTaskById(taskId)});
+                if (id == null) break;
+                setModalState({ModalState: ModalState.EditMainTask, Id: id, MainTask: selectMainTaskById(id)});
                 return;
             case ModalState.CreateMainTask:
-                setModalState({ModalState: ModalState.CreateMainTask, Id: taskId, MainTask: null});
+                setModalState({ModalState: ModalState.CreateMainTask, Id: id, MainTask: null});
                 return;
             case ModalState.DeleteMainTask:
+                if (id == null) break;
                 setModalState(NoneData);
                 return;
-            default:
-                setModalState(NoneData);
+            case ModalState.CreateBoard:
+                setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null});
+                return;
         }
+        setModalState(NoneData);
     }, [pathname, searchParams])
 
     const handleCloseModal = () => {
         const params = new URLSearchParams(searchParams?.toString());
         setPreviousModalState(modalState);
         setModalState(NoneData);
-        params.delete('task');
+        params.delete('id');
         params.delete('action');
         replace(`${pathname}?${params.toString()}`);
     }
@@ -90,6 +96,8 @@ const ModalHandler = () => {
                 return <MainTaskEditModal mainTask={state.MainTask!} onClose={handleCloseModal}/>;
             case ModalState.CreateMainTask:
                 return <MainTaskCreateModal onClose={handleCloseModal}/>;
+            case ModalState.CreateBoard:
+                return <>Create B</>;
             default:
                 return null;
         }

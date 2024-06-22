@@ -6,10 +6,9 @@ import iconVerticalEllipsis from '/public/icon-vertical-ellipsis.svg';
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
 import {useData} from "@/context/DataContext";
 import {useBoardStore} from "@/hooks/useStore";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {ModalState} from "@/components/ModalHandler";
 import React from "react";
 import clsx from "clsx";
+import useSetUrl from "@/hooks/useSetUrl";
 
 interface Props {
     isMenuOpen: boolean,
@@ -20,10 +19,8 @@ interface Props {
 export default function NavBar(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const {replace} = useRouter();
 
+    const {setAddMainTaskUrl} = useSetUrl();
 
     let avartar = <></>;
     if (data.discordAvatarUrl != undefined) {
@@ -33,13 +30,6 @@ export default function NavBar(props: Props) {
                 src={data.discordAvatarUrl}
             />
         )
-    }
-
-    function setAddNewTaskUrl() {
-        const params = new URLSearchParams(searchParams?.toString());
-        params.set('task', "0");
-        params.set('action', ModalState.CreateMainTask.toString());
-        replace(`${pathname}?${params.toString()}`);
     }
 
     return (
@@ -83,7 +73,7 @@ export default function NavBar(props: Props) {
                     <button
                         className="bg-k-purple px-4 h-8 flex items-center justify-center rounded-3xl disabled:opacity-25 hover:bg-kh-purple"
                         disabled={board.id == 0}
-                        onClick={setAddNewTaskUrl}
+                        onClick={setAddMainTaskUrl}
                     >
                         <Image
                             className="block"
