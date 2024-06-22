@@ -17,6 +17,8 @@ import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import MainTaskComponent from "@/components/MainTaskComponent";
 import {createPortal} from "react-dom";
 import {useBoardStore} from "@/hooks/useStore";
+import KProcessing from "@/components/KProcessing";
+import clsx from "clsx";
 
 const BoardComponent = React.memo(() => {
         const moveMainTask = useBoardStore((state) => state.moveMainTask);
@@ -25,6 +27,9 @@ const BoardComponent = React.memo(() => {
         const board = useBoardStore((state) => state.board);
         const activeId = useBoardStore((state) => state.activeId);
         const setActiveId = useBoardStore((state) => state.setActiveId);
+        const addColumn = useBoardStore((state) => state.addColumn);
+        const [isProcessAddColumn, setIsProcessAddColumn] = useState(false);
+
         console.log("Board invoked");
 
         useEffect(() => {
@@ -32,6 +37,12 @@ const BoardComponent = React.memo(() => {
         });
 
         // const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+
+        async function addNewColumn() {
+            setIsProcessAddColumn(true);
+            await addColumn("Column name");
+            setIsProcessAddColumn(false);
+        }
 
         const sensors = useSensors(
             useSensor(MouseSensor, {
@@ -219,7 +230,7 @@ const BoardComponent = React.memo(() => {
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
                 >
-                    <div className="overflow-scroll w-full h-full grow px-4">
+                    <div className="flex flex-col overflow-scroll w-full h-full grow px-4">
                         <div className="flex gap-x-6 pb-8 h-max w-max grow">
                             <SortableContext
                                 items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
@@ -235,7 +246,8 @@ const BoardComponent = React.memo(() => {
                                 }
                             </SortableContext>
                             <div
-                                className="shrink-0 grow w-[280px] flex flex-col">
+                                className="shrink-0 grow w-[280px] flex flex-col"
+                            >
                                 <div>
                                     <p className="pb-6 heading-s text-transparent">
                                         Add column
@@ -243,7 +255,14 @@ const BoardComponent = React.memo(() => {
                                 </div>
                                 <div
                                     className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] flex items-center justify-center rounded-lg">
-                                    + New Column
+                                    <button
+                                        className={clsx("heading-xl text-k-medium-grey hover:enabled:text-k-purple", {
+                                            "pointer-events-none": isProcessAddColumn
+                                        })}
+                                        onClick={addNewColumn}
+                                    >
+                                        {isProcessAddColumn ? <KProcessing/> : '+ New Column'}
+                                    </button>
                                 </div>
                             </div>
                         </div>

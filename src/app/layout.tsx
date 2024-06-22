@@ -26,7 +26,6 @@ export default function RootLayout({
         <div className="">
             <DataProvider>
                 <WaitMe>
-                    <SwitchTheme/>
                     <>
                         {children}
                     </>

@@ -23,7 +23,6 @@ export default function BoardPage() {
 
     return (
         <>
-            <p>{JSON.stringify(searchParams)} | {JSON.stringify(params!.boardId)}</p>
             {!isFetching && (
                 <>
                     <div className="touch-manipulation w-full grow flex flex-col">

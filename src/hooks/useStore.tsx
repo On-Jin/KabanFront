@@ -3,6 +3,7 @@ import {Board} from "@/lib/types/Board";
 import {DocumentNode} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
 import {
+    ADD_COLUMN,
     ADD_MAINTASK,
     ADD_SUBTASKS, DELETE_MAINTASK,
     DELETE_SUBTASKS,
@@ -44,6 +45,7 @@ type BoardAction = {
     editMainTask: (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => Promise<void>,
     addMainTask: (title: string, description?: string, status?: string, subTaskTitles?: string[]) => Promise<void>,
     deleteMainTask: (id: number) => Promise<void>,
+    addColumn: (title: string) => Promise<void>,
 }
 
 const client = createApolloClient();
@@ -96,6 +98,21 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         } catch (e) {
             console.error(JSON.stringify(e))
         }
+    },
+    addColumn: async (name: string) => {
+        const {board} = get();
+
+        const {data, errors} = await client.mutate({
+            mutation: ADD_COLUMN, variables: {
+                input: {
+                    boardId: board.id,
+                    name
+                }
+            },
+        });
+        set(produce((state: BoardState) => {
+            state.board.columns.push(data.addColumn.column);
+        }));
     },
     addMainTask: async (title: string, description?: string, status?: string, subTaskTitles?: string[]) => {
         const {board} = get();

@@ -60,7 +60,7 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, isDragElement}: {
                                 {column.name} ({column.mainTasks.length}) {column.id}
                             </p>
                         </div>
-                        <div className="space-y-5">
+                        <div className="space-y-5 w-[280px]">
                             <SortableContext
                                 id={`sortable-maintask-c-${column.id}`}
                                 items={mainTaskListIds}
