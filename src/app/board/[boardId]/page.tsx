@@ -16,7 +16,6 @@ export default function BoardPage() {
 
 
     useEffect(() => {
-        const url = pathname + (searchParams ? searchParams.toString() : "");
         fetchBoard(parseInt(params!.boardId as string)).then(() => {
             setIsFetching(false);
         });

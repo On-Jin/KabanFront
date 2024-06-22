@@ -55,7 +55,7 @@ export default function NavBar(props: Props) {
                         onClick={() => props.switchIsMenuOpen()}
                     >
                         <h2 className="block">
-                            Platform Launch
+                            {board.id == 0 ? "Kaban" : board.name}
                         </h2>
                         <Image
                             className="block self-center"

@@ -6,10 +6,13 @@ import clsx from "clsx";
 import {ReactSVG} from 'react-svg'
 import useClickOutside from "@/hooks/useClickOutside";
 import {CSSTransition} from "react-transition-group";
+import Link from "next/link";
 
 export default function Content({children}: { children: React.ReactNode }) {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
     const boardInfos = useBoardStore((state) => state.boardIds);
+    const board = useBoardStore((state) => state.board);
+    // const fetchBoard = useBoardStore((state) => state.fetchBoard);
     const {ref} = useClickOutside<HTMLDivElement>(setIsMenuOpen);
 
     return (
@@ -38,14 +41,18 @@ export default function Content({children}: { children: React.ReactNode }) {
                             <menu className="heading-m [&>*]:pl-6">
                                 {boardInfos?.map((b, i) => (
                                     <li key={b.id}
-                                        className={clsx("flex items-center gap-x-3 py-3.5 pr-14 rounded-r-full", {
-                                            "bg-k-purple text-white": i == 0
+                                        className={clsx("py-3.5 pr-14 rounded-r-full", {
+                                            "bg-k-purple text-white": b.id === board.id
                                         })}
                                     >
-                                        <ReactSVG className={clsx("w-4 h-4 fill-[#828FA3]", {
-                                            "fill-white": i == 0
-                                        })} src="/icon-board.svg"/>
-                                        <span>{b.name}</span>
+                                        <Link href={`/board/${b.id}`}>
+                                            <div className="flex items-center gap-x-3">
+                                                <ReactSVG className={clsx("w-4 h-4 fill-[#828FA3]", {
+                                                    "fill-white": b.id === board.id
+                                                })} src="/icon-board.svg"/>
+                                                <span>{b.name}</span>
+                                            </div>
+                                        </Link>
                                     </li>
                                 ))}
                                 <li
