@@ -11,6 +11,7 @@ import MainTaskCreateModal from "@/components/MainTaskCreateModal";
 import {MainTask} from "@/lib/types/MainTask";
 import {useBoardStore} from "@/hooks/useStore";
 import BoardCreateModal from "@/components/BoardCreateModal";
+import BoardEditModal from "@/components/BoardEditModal";
 
 export enum ModalState {
     None,
@@ -18,7 +19,8 @@ export enum ModalState {
     EditMainTask,
     CreateMainTask,
     DeleteMainTask,
-    CreateBoard
+    CreateBoard,
+    EditBoard
 }
 
 interface ModalData {
@@ -76,6 +78,9 @@ const ModalHandler = () => {
             case ModalState.CreateBoard:
                 setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null});
                 return;
+            case ModalState.EditBoard:
+                setModalState({ModalState: ModalState.EditBoard, Id: null, MainTask: null});
+                return;
         }
         setModalState(NoneData);
     }, [pathname, searchParams])
@@ -99,6 +104,8 @@ const ModalHandler = () => {
                 return <MainTaskCreateModal onClose={handleCloseModal}/>;
             case ModalState.CreateBoard:
                 return <BoardCreateModal onClose={handleCloseModal}/>;
+            case ModalState.EditBoard:
+                return <BoardEditModal onClose={handleCloseModal}/>;
             default:
                 return null;
         }

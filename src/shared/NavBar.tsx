@@ -20,7 +20,7 @@ export default function NavBar(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
 
-    const {setAddMainTaskUrl} = useSetUrl();
+    const {setAddMainTaskUrl, setEditBoardUrl} = useSetUrl();
 
     let avartar = <></>;
     if (data.discordAvatarUrl != undefined) {
@@ -53,8 +53,10 @@ export default function NavBar(props: Props) {
                         onClick={() => {
                             props.switchIsMenuOpen();
                         }}
-                        onMouseUp={() => {}}
-                        onMouseDown={() => {}}
+                        onMouseUp={() => {
+                        }}
+                        onMouseDown={() => {
+                        }}
                     >
                         <h2 className="block">
                             {board.id == 0 ? "Kaban" : board.name}
@@ -85,7 +87,11 @@ export default function NavBar(props: Props) {
                     </button>
                 </li>
                 <li className="h-4 appearance-none">
-                    <button className="flex">
+                    <button
+                        className="flex"
+                        disabled={board.id == 0}
+                        onClick={setEditBoardUrl}
+                    >
                         <Image
                             className="block "
                             height={16}

@@ -1,18 +1,18 @@
 ﻿import {create} from 'zustand'
 import {Board} from "@/lib/types/Board";
-import {DocumentNode} from "@apollo/client";
+import {DocumentNode, FetchResult} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
 import {
     ADD_BOARD,
     ADD_COLUMN,
     ADD_MAINTASK,
-    ADD_SUBTASKS, DELETE_MAINTASK,
+    ADD_SUBTASKS, DELETE_COLUMN, DELETE_MAINTASK,
     DELETE_SUBTASKS,
     GET_BOARD_BY_ID_QUERY,
     GET_BOARDS_IDS,
     MOVE_MAINTASK,
     moveColumnMutation,
-    moveMainTask, PATCH_MAINTASK,
+    moveMainTask, PATCH_BOARD, PATCH_COLUMN, PATCH_MAINTASK,
     PATCH_SUBTASK, UPDATE_MAINTASK
 } from "@/lib/gqlMutation";
 import {arrayMove} from "@/lib/Utils";
@@ -20,6 +20,7 @@ import {Column} from "@/lib/types/Column";
 import {produce} from "immer";
 import {MainTask} from "@/lib/types/MainTask";
 import {useRouter} from "next/navigation";
+import {InputColumn} from "@/lib/forms/InputColumn";
 
 interface BoardInfoData {
     id: number,
@@ -49,6 +50,8 @@ type BoardAction = {
     deleteMainTask: (id: number) => Promise<void>,
     addColumn: (title: string) => Promise<void>,
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
+    patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
+
 }
 
 const client = createApolloClient();
@@ -101,6 +104,41 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         } catch (e) {
             console.error(JSON.stringify(e))
         }
+    },
+    patchBoard: async (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => {
+        let promises: Promise<FetchResult<any>>[] = [];
+        promises = promises.concat(updatedColumnNames.map(c => {
+            if (c.isNew) {
+                console.log("ADD_COLUMN")
+                return client.mutate({
+                    mutation: ADD_COLUMN, variables: {input: {boardId: boardId, name: c.name}},
+                });
+            }
+            console.log("PATCH_COLUMN")
+            return client.mutate({
+                mutation: PATCH_COLUMN, variables: {input: {id: c.id, name: c.name}},
+            });
+        }));
+
+
+        promises = promises.concat(deletedColumnIds.map(columnId => {
+            console.log("DELETE_COLUMN")
+            return client.mutate({
+                mutation: DELETE_COLUMN, variables: {input: {id: columnId}},
+            });
+        }));
+
+        console.log(promises.length);
+
+        await Promise.all(promises);
+
+        const {data} = await client.mutate({
+            mutation: PATCH_BOARD, variables: {input: {id: boardId, name: name}},
+        });
+
+        set(produce((state: BoardState) => {
+            state.board = data.patchBoard.board
+        }));
     },
     addBoard: async (name: string, columnNames: string[]) => {
         const {data} = await client.mutate({

@@ -35,7 +35,15 @@ const useTaskUrl = () => {
         replace(`${pathname}?${params.toString()}`);
     }
 
-    return {setAddMainTaskUrl, setViewMainTaskUrl, setEditTaskModalUrl, setAddBoardUrl};
+    function setEditBoardUrl() {
+        const params = new URLSearchParams(searchParams?.toString());
+        params.delete('id');
+        params.set('action', ModalState.EditBoard.toString());
+        console.log(`${pathname}?${params.toString()}`)
+        replace(`${pathname}?${params.toString()}`);
+    }
+
+    return {setAddMainTaskUrl, setViewMainTaskUrl, setEditTaskModalUrl, setAddBoardUrl, setEditBoardUrl};
 };
 
 export default useTaskUrl;

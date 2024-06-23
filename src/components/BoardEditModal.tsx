@@ -7,23 +7,23 @@ import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
 import KProcessing from "@/components/KProcessing";
 import {useBoardStore} from "@/hooks/useStore";
-import {useRouter} from "next/navigation";
 import {InputBoard} from "@/lib/forms/InputBoard";
+import {InputColumn} from "@/lib/forms/InputColumn";
 
-export default function BoardCreateModal({onClose}: {
+export default function BoardEditModal({onClose}: {
     onClose: () => void
 }) {
     const [isProcess, setIsProcess] = useState(false);
-    const addBoard = useBoardStore((state) => state.addBoard);
+    const board = useBoardStore(state => state.board);
+    const patchBoard = useBoardStore((state) => state.patchBoard);
     usePointerEvents(isProcess);
-    const {replace} = useRouter();
 
 
     const {register, setValue, control, handleSubmit, watch, formState: {errors}}
         = useForm<InputBoard>({
         defaultValues: {
-            name: "",
-            columnNames: [{name: "Todo", id: 0, isNew: true}, {name: "Doing", id: 0, isNew: true}]
+            name: board.name,
+            columnNames: board.columns.map(c => ({name: c.name, id: c.id, isNew: false} as InputColumn))
         }
     });
 
@@ -34,12 +34,21 @@ export default function BoardCreateModal({onClose}: {
     });
 
     const onSubmit: SubmitHandler<InputBoard> = async data => {
-        setIsProcess(true)
-        addBoard(data.name, data.columnNames.map(c => c.name))
-            .then((newBoardId) => {
+        setIsProcess(true);
+
+        const newColumns = data.columnNames.filter(c => c.isNew);
+        const updatedColumn = data.columnNames.filter(c => !c.isNew && (board.columns.find(dataC => dataC.id == c.id)?.name != c.name));
+        const deletedColumns = board.columns
+            .filter(c => !data.columnNames.some(dataC => !dataC.isNew && dataC.id === c.id))
+            .map(s => s.id);
+
+        console.log("deletedColumns", deletedColumns);
+        console.log("updatedColumn", updatedColumn);
+        console.log("newColumns", newColumns);
+        patchBoard(board.id, data.name, deletedColumns, [...newColumns, ...updatedColumn])
+            .then(() => {
                 setIsProcess(false);
                 onClose();
-                replace(`/board/${newBoardId}`);
             });
     };
 
@@ -53,7 +62,7 @@ export default function BoardCreateModal({onClose}: {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <p className="body-m text-k-medium-grey">
-                            Board Name
+                            Edit Board
                         </p>
                         <KStringput
                             disabled={isProcess}
@@ -94,7 +103,7 @@ export default function BoardCreateModal({onClose}: {
                             buttonType={KButtonType.Secondary}
                             disabled={isProcess}
                             onClick={() => {
-                                append({name: "", id: 0, isNew: true});
+                                append({name: "", id: Math.max(...fields.map(f => f.id)) + 1, isNew: true});
                             }}
                         >
                             <>+ Add New Column</>
@@ -106,7 +115,7 @@ export default function BoardCreateModal({onClose}: {
                         onClick={handleSubmit(onSubmit)}
                         disabled={isProcess}
                     >
-                        {isProcess ? <KProcessing/> : 'Create New Board'}
+                        {isProcess ? <KProcessing/> : 'Save Changes'}
                     </KButton>
                 </form>
             </div>

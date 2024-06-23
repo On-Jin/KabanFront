@@ -19,6 +19,80 @@ export const DELETE_SUBTASKS = gql`
         }
     }`;
 
+export const PATCH_COLUMN = gql`
+    mutation PatchColumn($input: PatchColumnInput!) {
+        patchColumn(input: $input) {
+            board {
+                id
+                name
+                columns {
+                    id
+                    name
+                    mainTasks {
+                        description
+                        id
+                        status
+                        title
+                        subTasks {
+                            id
+                            isCompleted
+                            title
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export const DELETE_COLUMN = gql`
+    mutation DeleteColumn($input: DeleteColumnInput!) {
+        deleteColumn(input: $input) {
+            column {
+                id
+                name
+                mainTasks {
+                    description
+                    id
+                    status
+                    title
+                    subTasks {
+                        id
+                        isCompleted
+                        title
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export const PATCH_BOARD = gql`
+    mutation PatchBoard($input: PatchBoardInput!) {
+        patchBoard(input: $input) {
+            board {
+                id
+                name
+                columns {
+                    id
+                    name
+                    mainTasks {
+                        description
+                        id
+                        status
+                        title
+                        subTasks {
+                            id
+                            isCompleted
+                            title
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export const ADD_BOARD = gql`
     mutation AddBoard($input: AddBoardInput!) {
         addBoard(input: $input) {
