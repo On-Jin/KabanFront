@@ -326,6 +326,16 @@ interface Data {
     boards: Board[];
 }
 
+export const DELETE_BOARD = gql`
+    mutation DeleteBoard($id: Int!) {
+        deleteBoard(input: { id: $id }) {
+            board {
+                id
+            }
+        }
+    }
+`;
+
 export const DELETE_MAINTASK = gql`
     mutation DeleteMaiNTask($id: Int!) {
         deleteMainTask(input: { id: $id }) {

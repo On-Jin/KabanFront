@@ -50,7 +50,23 @@ const useTaskUrl = () => {
         replace(`${pathname}?${params.toString()}`);
     }
 
-    return {setAddMainTaskUrl, setViewMainTaskUrl, setEditTaskModalUrl, setAddBoardUrl, setEditBoardUrl, setDeleteTaskModalUrl};
+    function setDeleteBoardUrl(id: number) {
+        const params = new URLSearchParams(searchParams?.toString());
+        params.set('id', id.toString());
+        params.set('action', ModalState.DeleteBoard.toString());
+        console.log(`${pathname}?${params.toString()}`)
+        replace(`${pathname}?${params.toString()}`);
+    }
+
+    return {
+        setAddMainTaskUrl,
+        setViewMainTaskUrl,
+        setEditTaskModalUrl,
+        setAddBoardUrl,
+        setEditBoardUrl,
+        setDeleteTaskModalUrl,
+        setDeleteBoardUrl
+    };
 };
 
 export default useTaskUrl;

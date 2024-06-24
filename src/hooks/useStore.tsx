@@ -6,7 +6,7 @@ import {
     ADD_BOARD,
     ADD_COLUMN,
     ADD_MAINTASK,
-    ADD_SUBTASKS, DELETE_COLUMN, DELETE_MAINTASK,
+    ADD_SUBTASKS, DELETE_BOARD, DELETE_COLUMN, DELETE_MAINTASK,
     DELETE_SUBTASKS,
     GET_BOARD_BY_ID_QUERY,
     GET_BOARDS_IDS,
@@ -48,6 +48,7 @@ type BoardAction = {
     editMainTask: (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => Promise<void>,
     addMainTask: (title: string, description?: string, status?: string, subTaskTitles?: string[]) => Promise<void>,
     deleteMainTask: (id: number) => Promise<void>,
+    deleteBoard: (id: number) => Promise<void>,
     addColumn: (title: string) => Promise<void>,
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
     patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
@@ -96,7 +97,14 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         }));
     },
     setActiveId: (newActiveId: string | null) => set((state) => ({activeId: newActiveId})),
-
+    deleteBoard: async (id: number) => {
+        try {
+            await new Promise(f => setTimeout(f, 2000));
+            await client.mutate({mutation: DELETE_BOARD, variables: {id},});
+        } catch (e) {
+            console.error(JSON.stringify(e))
+        }
+    },
     deleteMainTask: async (id: number) => {
         try {
             await new Promise(f => setTimeout(f, 2000));

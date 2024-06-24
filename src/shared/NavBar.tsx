@@ -1,4 +1,4 @@
-﻿// 'use client';
+﻿'use client';
 import Image from "next/image";
 import logoMobile from '/public/logo-mobile.svg';
 import iconChevronDown from "/public/icon-chevron-down.svg";
@@ -9,6 +9,7 @@ import {useBoardStore} from "@/hooks/useStore";
 import React from "react";
 import clsx from "clsx";
 import useSetUrl from "@/hooks/useSetUrl";
+import EditDeleteMenu, {EditDeleteMenuSize} from "@/components/EditDeleteMenu";
 
 interface Props {
     isMenuOpen: boolean,
@@ -20,7 +21,7 @@ export default function NavBar(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
 
-    const {setAddMainTaskUrl, setEditBoardUrl} = useSetUrl();
+    const {setAddMainTaskUrl, setDeleteBoardUrl, setEditBoardUrl} = useSetUrl();
 
     let avartar = <></>;
     if (data.discordAvatarUrl != undefined) {
@@ -86,18 +87,13 @@ export default function NavBar(props: Props) {
                         {/*<span>Add New Task</span>*/}
                     </button>
                 </li>
-                <li className="h-4 appearance-none">
-                    <button
-                        className="flex"
-                        disabled={board.id == 0}
-                        onClick={setEditBoardUrl}
-                    >
-                        <Image
-                            className="block "
-                            height={16}
-                            src={iconVerticalEllipsis} alt="options"
-                        />
-                    </button>
+                <li>
+                    <EditDeleteMenu
+                        className="right-0 top-full mt-4 drop-shadow"
+                        menuSize={EditDeleteMenuSize.Small}
+                        actionEdit={{name: "Edit Board", onClick: setEditBoardUrl}}
+                        actionDelete={{name: "Delete Board", onClick: () => setDeleteBoardUrl(board.id)}}
+                    />
                 </li>
             </div>
         </menu>

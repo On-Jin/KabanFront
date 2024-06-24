@@ -3,11 +3,24 @@ import clsx from "clsx";
 import {ReactSVG} from "react-svg";
 import useClickOutside from "@/hooks/useClickOutside";
 
-export default function EditAddMenu({onClickEdit, onClickDelete}: {
-    onClickEdit: () => void,
-    onClickDelete: () => void,
+export enum EditDeleteMenuSize {
+    Small,
+    Big
+}
+
+export interface NameActionProp {
+    name: string;
+    onClick: () => void
+}
+
+export default function EditDeleteMenu({className, actionEdit, actionDelete, menuSize}: {
+    className?: string | null,
+    actionEdit: NameActionProp,
+    actionDelete: NameActionProp,
+    menuSize?: EditDeleteMenuSize | null
 }) {
 
+    menuSize = menuSize ?? EditDeleteMenuSize.Small;
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen);
 
@@ -23,28 +36,34 @@ export default function EditAddMenu({onClickEdit, onClickDelete}: {
                         setIsMenuOpen(!isMenuOpen);
                     }}
                 >
-                    <ReactSVG className={clsx("")} src="/icon-vertical-ellipsis.svg"/>
+                    <ReactSVG className={clsx("scale-[80%]", {
+                        "lg:scale-[100%]": menuSize === EditDeleteMenuSize.Big,
+                    })} src="/icon-vertical-ellipsis.svg"/>
                 </button>
 
                 {isMenuOpen && (
                     <div
                         ref={(el) => addRef(el)}
-                        className="absolute left-1/2 transform -translate-x-1/2 top-[100%]
-                                            rounded-lg p-4 space-y-4 w-[190px] bg-white body-l">
+                        className={clsx(`absolute rounded-lg p-4 space-y-4 w-[190px] bg-white body-l ${className}`,
+                            {
+                                "left-1/2 transform -translate-x-1/2 top-[100%]": !className
+                            }
+                        )}
+                    >
                         <button
                             className="text-k-medium-grey hover:enabled:font-bold w-full flex justify-center"
-                            onClick={() => onClickEdit()}
+                            onClick={() => actionEdit.onClick()}
                         >
-                            Edit Task
+                            {actionEdit.name}
                         </button>
 
                         <button
                             className="text-k-red hover:enabled:font-bold w-full flex justify-center"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onClickDelete();
+                                actionDelete.onClick();
                             }}>
-                            Delete Task
+                            {actionDelete.name}
                         </button>
                     </div>
                 )}

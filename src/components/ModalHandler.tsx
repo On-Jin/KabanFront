@@ -13,6 +13,8 @@ import {useBoardStore} from "@/hooks/useStore";
 import BoardCreateModal from "@/components/BoardCreateModal";
 import BoardEditModal from "@/components/BoardEditModal";
 import MainTaskDeleteModal from "@/components/MainTaskDeleteModal";
+import BoardDeleteModal from "@/components/BoardDeleteModal";
+import {Board} from "@/lib/types/Board";
 
 export enum ModalState {
     None,
@@ -21,17 +23,19 @@ export enum ModalState {
     CreateMainTask,
     DeleteMainTask,
     CreateBoard,
-    EditBoard
+    EditBoard,
+    DeleteBoard
 }
 
 interface ModalData {
     ModalState: ModalState;
     Id: number | null;
     MainTask: MainTask | null;
+    Board: Board | null;
 }
 
 
-const NoneData: ModalData = {ModalState: ModalState.None, Id: null, MainTask: null};
+const NoneData: ModalData = {ModalState: ModalState.None, Id: null, MainTask: null, Board: null};
 
 const ModalHandler = () => {
     const searchParams = useSearchParams();
@@ -43,7 +47,7 @@ const ModalHandler = () => {
     const board = useBoardStore((state) => state.board);
 
     useEffect(() => {
-        if (modalState.Id)
+        if (modalState.Id && modalState.MainTask)
             setModalState({...modalState, MainTask: selectMainTaskById(modalState.Id)});
     }, [board]);
 
@@ -68,24 +72,43 @@ const ModalHandler = () => {
                 return;
             case ModalState.ViewMainTask:
                 if (id == null) break;
-                setModalState({ModalState: ModalState.ViewMainTask, Id: id, MainTask: selectMainTaskById(id)});
+                setModalState({
+                    ModalState: ModalState.ViewMainTask,
+                    Id: id,
+                    MainTask: selectMainTaskById(id),
+                    Board: null
+                });
                 return;
             case ModalState.EditMainTask:
                 if (id == null) break;
-                setModalState({ModalState: ModalState.EditMainTask, Id: id, MainTask: selectMainTaskById(id)});
+                setModalState({
+                    ModalState: ModalState.EditMainTask,
+                    Id: id,
+                    MainTask: selectMainTaskById(id),
+                    Board: null
+                });
                 return;
             case ModalState.CreateMainTask:
-                setModalState({ModalState: ModalState.CreateMainTask, Id: id, MainTask: null});
+                setModalState({ModalState: ModalState.CreateMainTask, Id: id, MainTask: null, Board: null});
                 return;
             case ModalState.DeleteMainTask:
                 if (id == null) break;
-                setModalState({ModalState: ModalState.DeleteMainTask, Id: id, MainTask: selectMainTaskById(id)});
+                setModalState({
+                    ModalState: ModalState.DeleteMainTask,
+                    Id: id,
+                    MainTask: selectMainTaskById(id),
+                    Board: null
+                });
                 return;
             case ModalState.CreateBoard:
-                setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null});
+                setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null, Board: null});
                 return;
             case ModalState.EditBoard:
-                setModalState({ModalState: ModalState.EditBoard, Id: null, MainTask: null});
+                setModalState({ModalState: ModalState.EditBoard, Id: null, MainTask: null, Board: null});
+                return;
+            case ModalState.DeleteBoard:
+                if (id == null) break;
+                setModalState({ModalState: ModalState.DeleteBoard, Id: id, MainTask: null, Board: board});
                 return;
         }
         setModalState(NoneData);
@@ -98,6 +121,15 @@ const ModalHandler = () => {
         params.delete('id');
         params.delete('action');
         replace(`${pathname}?${params.toString()}`);
+    }
+
+    const handleDeletedBoard = () => {
+        const params = new URLSearchParams(searchParams?.toString());
+        setPreviousModalState(modalState);
+        setModalState(NoneData);
+        params.delete('id');
+        params.delete('action');
+        replace(`/?${params.toString()}`);
     }
 
     const renderModalContent = (state: ModalData) => {
@@ -114,6 +146,8 @@ const ModalHandler = () => {
                 return <BoardCreateModal onClose={handleCloseModal}/>;
             case ModalState.EditBoard:
                 return <BoardEditModal onClose={handleCloseModal}/>;
+            case ModalState.DeleteBoard:
+                return <BoardDeleteModal board={state.Board!} onClose={handleDeletedBoard}/>;
             default:
                 return null;
         }

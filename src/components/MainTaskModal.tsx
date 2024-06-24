@@ -5,7 +5,7 @@ import {useBoardStore} from "@/hooks/useStore";
 import clsx from "clsx";
 import {MainTask} from "@/lib/types/MainTask";
 import useSetUrl from "@/hooks/useSetUrl";
-import EditAddMenu from "@/components/EditAddMenu";
+import EditDeleteMenu, {EditDeleteMenuSize} from "@/components/EditDeleteMenu";
 
 export default function MainTaskModal({mainTask, onClose}: {
     mainTask: MainTask,
@@ -31,9 +31,10 @@ export default function MainTaskModal({mainTask, onClose}: {
                     <p className="heading-l">
                         {mainTask.title}
                     </p>
-                    <EditAddMenu
-                        onClickEdit={() => setEditTaskModalUrl(mainTask.id)}
-                        onClickDelete={() => setDeleteTaskModalUrl(mainTask.id)}
+                    <EditDeleteMenu
+                        menuSize={EditDeleteMenuSize.Big}
+                        actionEdit={{name: "Edit Task", onClick: () => setEditTaskModalUrl(mainTask.id)}}
+                        actionDelete={{name: "Delete Task", onClick: () => setDeleteTaskModalUrl(mainTask.id)}}
                     />
                 </div>
                 <p className="body-l text-k-medium-grey">{mainTask.description}</p>
