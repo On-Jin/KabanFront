@@ -5,6 +5,7 @@ import {DataProvider} from "@/context/DataContext";
 import WaitMe from "@/shared/WaitMe";
 import SwitchTheme from "@/components/SwitchTheme";
 import React from "react";
+import ModalHandler from "@/components/ModalHandler";
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
 
@@ -29,6 +30,7 @@ export default function RootLayout({
                     <>
                         {children}
                     </>
+                    <ModalHandler/>
                 </WaitMe>
             </DataProvider>
         </div>

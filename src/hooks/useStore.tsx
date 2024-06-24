@@ -48,7 +48,7 @@ type BoardAction = {
     editMainTask: (id: number, title?: string, description?: string, status?: string, deletedSubTaskIds?: number[], addedSubTaskTitles?: string[]) => Promise<void>,
     addMainTask: (title: string, description?: string, status?: string, subTaskTitles?: string[]) => Promise<void>,
     deleteMainTask: (id: number) => Promise<void>,
-    deleteBoard: (id: number) => Promise<void>,
+    deleteBoard: (id: number) => Promise<number | null>,
     addColumn: (title: string) => Promise<void>,
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
     patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
@@ -61,9 +61,11 @@ function generateColumnName(columns: Column[]): string[] {
     return columns.map(c => c.name);
 }
 
+const dummyBoard: Board = {id: 0, name: 'dummy', columns: []};
+
 export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     boardIds: null,
-    board: {id: 0, name: 'dummy', columns: []},
+    board: dummyBoard,
     columnNames: [],
     activeId: null,
     isLoading: true,
@@ -100,9 +102,27 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     deleteBoard: async (id: number) => {
         try {
             await new Promise(f => setTimeout(f, 2000));
-            await client.mutate({mutation: DELETE_BOARD, variables: {id},});
+            const {data} = await client.mutate({mutation: DELETE_BOARD, variables: {id},});
+            const deletedBoardId = data.deleteBoard.board.id;
+            console.log(deletedBoardId);
+            let {boardIds, fetchBoard} = get();
+            boardIds = boardIds!.filter((b => b.id !== deletedBoardId));
+
+            if (boardIds.length !== 0) {
+                await fetchBoard(boardIds[0].id);
+                set(produce((state: BoardState) => {
+                    state.boardIds = state.boardIds!.filter((b => b.id !== deletedBoardId));
+                }));
+                return boardIds[0].id;
+            }
+            set(produce((state: BoardState) => {
+                state.boardIds = state.boardIds!.filter((b => b.id !== deletedBoardId));
+                state.board = dummyBoard;
+            }));
+            return null;
         } catch (e) {
             console.error(JSON.stringify(e))
+            return null;
         }
     },
     deleteMainTask: async (id: number) => {

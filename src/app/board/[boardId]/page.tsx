@@ -28,7 +28,6 @@ export default function BoardPage() {
                     <div className="touch-manipulation w-full grow flex flex-col">
                         <BoardComponent/>
                     </div>
-                    <ModalHandler/>
                 </>
             )}
         </>);

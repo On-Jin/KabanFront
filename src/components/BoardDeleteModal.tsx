@@ -6,9 +6,10 @@ import usePointerEvents from "@/hooks/usePointerEvents";
 import clsx from "clsx";
 import {Board} from "@/lib/types/Board";
 
-export default function BoardDeleteModal({board, onClose}: {
+export default function BoardDeleteModal({board, onCancel, onDeleted}: {
     board: Board,
-    onClose: () => void
+    onCancel: () => void,
+    onDeleted: (newFetchedBoardId: number | null) => void
 }) {
     const [isProcess, setIsProcess] = useState(false);
     const deleteBoard = useBoardStore((state) => state.deleteBoard);
@@ -16,8 +17,8 @@ export default function BoardDeleteModal({board, onClose}: {
 
     async function deleteBoardHandler() {
         setIsProcess(true);
-        await deleteBoard(board.id);
-        onClose();
+        const newFetchedBoardId = await deleteBoard(board.id);
+        onDeleted(newFetchedBoardId);
         setIsProcess(false);
     }
 
@@ -42,7 +43,7 @@ export default function BoardDeleteModal({board, onClose}: {
                 </KButton>
                 <KButton
                     disabled={isProcess}
-                    onClick={onClose}
+                    onClick={onCancel}
                     buttonSize={KButtonSize.Small}
                     buttonType={KButtonType.Secondary}
                 >

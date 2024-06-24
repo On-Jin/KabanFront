@@ -101,6 +101,7 @@ const ModalHandler = () => {
                 });
                 return;
             case ModalState.CreateBoard:
+                console.log("CR")
                 setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null, Board: null});
                 return;
             case ModalState.EditBoard:
@@ -123,13 +124,17 @@ const ModalHandler = () => {
         replace(`${pathname}?${params.toString()}`);
     }
 
-    const handleDeletedBoard = () => {
+    const handleDeletedBoard = (newFetchedBoardId: number | null) => {
         const params = new URLSearchParams(searchParams?.toString());
         setPreviousModalState(modalState);
         setModalState(NoneData);
         params.delete('id');
         params.delete('action');
-        replace(`/?${params.toString()}`);
+        if (newFetchedBoardId) {
+            replace(`/board/${newFetchedBoardId}?${params.toString()}`);
+        } else {
+            replace(`/?${params.toString()}`);
+        }
     }
 
     const renderModalContent = (state: ModalData) => {
@@ -147,7 +152,8 @@ const ModalHandler = () => {
             case ModalState.EditBoard:
                 return <BoardEditModal onClose={handleCloseModal}/>;
             case ModalState.DeleteBoard:
-                return <BoardDeleteModal board={state.Board!} onClose={handleDeletedBoard}/>;
+                return <BoardDeleteModal board={state.Board!} onCancel={handleCloseModal}
+                                         onDeleted={handleDeletedBoard}/>;
             default:
                 return null;
         }
