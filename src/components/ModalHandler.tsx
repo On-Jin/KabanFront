@@ -12,6 +12,7 @@ import {MainTask} from "@/lib/types/MainTask";
 import {useBoardStore} from "@/hooks/useStore";
 import BoardCreateModal from "@/components/BoardCreateModal";
 import BoardEditModal from "@/components/BoardEditModal";
+import MainTaskDeleteModal from "@/components/MainTaskDeleteModal";
 
 export enum ModalState {
     None,
@@ -39,7 +40,12 @@ const ModalHandler = () => {
     const [modalState, setModalState] = useState<ModalData>(NoneData);
     const [previousModalState, setPreviousModalState] = useState<ModalData>(NoneData);
     const selectMainTaskById = useBoardStore((state) => state.selectMainTaskById);
+    const board = useBoardStore((state) => state.board);
 
+    useEffect(() => {
+        if (modalState.Id)
+            setModalState({...modalState, MainTask: selectMainTaskById(modalState.Id)});
+    }, [board]);
 
     const ref = useRef(null);
 
@@ -73,7 +79,7 @@ const ModalHandler = () => {
                 return;
             case ModalState.DeleteMainTask:
                 if (id == null) break;
-                setModalState(NoneData);
+                setModalState({ModalState: ModalState.DeleteMainTask, Id: id, MainTask: selectMainTaskById(id)});
                 return;
             case ModalState.CreateBoard:
                 setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null});
@@ -102,6 +108,8 @@ const ModalHandler = () => {
                 return <MainTaskEditModal mainTask={state.MainTask!} onClose={handleCloseModal}/>;
             case ModalState.CreateMainTask:
                 return <MainTaskCreateModal onClose={handleCloseModal}/>;
+            case ModalState.DeleteMainTask:
+                return <MainTaskDeleteModal mainTask={state.MainTask!} onClose={handleCloseModal}/>;
             case ModalState.CreateBoard:
                 return <BoardCreateModal onClose={handleCloseModal}/>;
             case ModalState.EditBoard:

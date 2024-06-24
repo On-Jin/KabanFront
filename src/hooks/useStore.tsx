@@ -244,7 +244,9 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         await client.mutate({
             mutation: PATCH_SUBTASK,
             variables: {id, isCompleted, title}
-        }).catch(error => console.log(JSON.stringify(error)));
+        })
+            .then(data => console.log(JSON.stringify(data)))
+            .catch(error => console.log(JSON.stringify(error)));
     },
     moveColumn: async (columnId: number, toIndex: number) => {
         // shallow copy

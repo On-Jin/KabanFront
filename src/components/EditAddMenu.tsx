@@ -3,8 +3,7 @@ import clsx from "clsx";
 import {ReactSVG} from "react-svg";
 import useClickOutside from "@/hooks/useClickOutside";
 
-export default function EditAddMenu({disabled, onClickEdit, onClickDelete}: {
-    disabled: boolean,
+export default function EditAddMenu({onClickEdit, onClickDelete}: {
     onClickEdit: () => void,
     onClickDelete: () => void,
 }) {
@@ -14,12 +13,11 @@ export default function EditAddMenu({disabled, onClickEdit, onClickDelete}: {
 
     return (
         <>
-            <div className="relative flex">
+            <div className="relative flex z-20">
                 <button
                     type="button"
                     ref={(el) => addRef(el)}
                     className="px-4 z-10"
-                    disabled={disabled}
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsMenuOpen(!isMenuOpen);
@@ -34,7 +32,6 @@ export default function EditAddMenu({disabled, onClickEdit, onClickDelete}: {
                         className="absolute left-1/2 transform -translate-x-1/2 top-[100%]
                                             rounded-lg p-4 space-y-4 w-[190px] bg-white body-l">
                         <button
-                            disabled={disabled}
                             className="text-k-medium-grey hover:enabled:font-bold w-full flex justify-center"
                             onClick={() => onClickEdit()}
                         >
@@ -42,7 +39,6 @@ export default function EditAddMenu({disabled, onClickEdit, onClickDelete}: {
                         </button>
 
                         <button
-                            disabled={disabled}
                             className="text-k-red hover:enabled:font-bold w-full flex justify-center"
                             onClick={(e) => {
                                 e.stopPropagation();
