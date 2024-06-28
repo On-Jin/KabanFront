@@ -1,11 +1,11 @@
 ﻿import React, {useEffect, useRef} from 'react';
 
 
-const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetStateAction<any>>) => {
+const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetStateAction<any>>, additionalPredicate?: () => boolean) => {
     const refs = useRef<T[]>([]);
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (!refs.current.some(ref => ref && ref.contains(event.target as Node))) {
+        if ((additionalPredicate == null || additionalPredicate()) && !refs.current.some(ref => ref && ref.contains(event.target as Node))) {
             set(false);
         }
     };
@@ -15,7 +15,7 @@ const useClickOutside = <T extends HTMLElement, >(set: React.Dispatch<React.SetS
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [additionalPredicate]);
 
     const addRef = (el: T | null) => {
         if (el && !refs.current.includes(el)) {

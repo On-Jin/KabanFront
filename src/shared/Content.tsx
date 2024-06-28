@@ -8,20 +8,48 @@ import useClickOutside from "@/hooks/useClickOutside";
 import {CSSTransition} from "react-transition-group";
 import Link from "next/link";
 import useSetUrl from "@/hooks/useSetUrl";
+import {useBreakpoint} from "@/hooks/useBreakpoint";
+import NavBarDesktop from "@/shared/NavBarDesktop";
+import BoardsMenu from "@/shared/BoardsMenu";
 
 export default function Content({children}: { children: React.ReactNode }) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const boardInfos = useBoardStore((state) => state.boardIds);
     const board = useBoardStore((state) => state.board);
-    const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen);
+    const isMenuOpen = useBoardStore((state) => state.isMenuOpen);
+    const setIsMenuOpen = useBoardStore((state) => state.setIsMenuOpen);
     const {setAddBoardUrl} = useSetUrl();
+    const isDesktop = useBreakpoint("md");
+    const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen, () => !isDesktop);
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <NavBar addRef={addRef}
-                    switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
-                    isMenuOpen={isMenuOpen}/>
-            <main className="relative flex flex-col items-center grow">
+        <div className="flex flex-col min-h-screen max-h-screen">
+            {!isDesktop && <NavBar
+                addRef={addRef}
+                switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
+                isMenuOpen={isMenuOpen}/>}
+
+            {isDesktop && <NavBarDesktop
+                switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
+                isMenuOpen={isMenuOpen}/>}
+
+            <main className={clsx("relative flex-grow flex overflow-hidden")}>
+                {/*<CSSTransition*/}
+                {/*    in={isMenuOpen}*/}
+                {/*    timeout={400}*/}
+                {/*    classNames="left-menu"*/}
+                {/*    unmountOnExit*/}
+                {/*    appear*/}
+
+                {/*>*/}
+                {/*<div className={clsx("hidden lg:block bg-k-red overflow-hidden transition-all", {*/}
+                {/*    // "-translate-x-full": !isMenuOpen,*/}
+                {/*    // "translate-x-0": isMenuOpen,*/}
+                {/*    "w-0": !isMenuOpen,*/}
+                {/*    "w-[200px]": isMenuOpen,*/}
+                {/*})}>*/}
+                {/*    awedee*/}
+                {/*</div>*/}
+                {/*</CSSTransition>*/}
                 <CSSTransition
                     in={isMenuOpen}
                     timeout={400}
@@ -34,7 +62,7 @@ export default function Content({children}: { children: React.ReactNode }) {
                         className="absolute top-0 left-0 bottom-0 right-0
                                     flex justify-center items-start
                                     bg-opacity-50 bg-k-black z-50
-                                    text-k-medium-grey"
+                                    md:invisible"
                     >
                         <div
                             ref={(el) => {
@@ -42,44 +70,19 @@ export default function Content({children}: { children: React.ReactNode }) {
                             }}
                             className="bg-white py-4 m-4 pr-6 rounded-lg max-w-[325px]"
                         >
-                            <p className="heading-s pb-5 pl-6">ALL BOARDS ({boardInfos?.length})</p>
-                            <menu className="heading-m [&>*]:pl-6">
-                                {boardInfos?.map(b => (
-                                    <li key={b.id}
-                                        className={clsx("py-3.5 pr-14 rounded-r-full", {
-                                            "bg-k-purple text-white": b.id === board.id
-                                        })}
-                                    >
-                                        <Link href={`/board/${b.id}`}>
-                                            <div className="flex items-center gap-x-3">
-                                                <ReactSVG className={clsx("w-4 h-4 fill-[#828FA3]", {
-                                                    "fill-white": b.id === board.id
-                                                })} src="/icon-board.svg"/>
-                                                <span>{b.name}</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-                                ))}
-                                <li
-                                    className={clsx("flex items-center gap-x-3 py-3.5 pr-14 rounded-r-full")}
-                                >
-                                    <ReactSVG className={clsx("w-4 h-4 fill-k-purple")} src="/icon-board.svg"/>
-                                    <button
-                                        className="text-k-purple"
-                                        onClick={() => {
-                                            setIsMenuOpen(false);
-                                            setAddBoardUrl();
-                                        }}
-                                    >
-                                        + Create New Board
-                                    </button>
-                                </li>
-                            </menu>
-                            <SwitchTheme className="ml-4 mt-4"/>
+                            <BoardsMenu/>
                         </div>
                     </div>
                 </CSSTransition>
-                {children}
+                <menu className={clsx("hidden md:block bg-white overflow-hidden transition-all shrink-0", {
+                    "w-0": !isMenuOpen,
+                    "md:w-[260px] lg:w-[300px]": isMenuOpen,
+                })}>
+                    <BoardsMenu/>
+                </menu>
+                <div className="overflow-auto flex-grow">
+                    {children}
+                </div>
             </main>
 
         </div>

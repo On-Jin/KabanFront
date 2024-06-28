@@ -44,3 +44,19 @@
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
 }
+
+.left-menu-enter {
+    /*transform: translateX(-100%);*/
+    width: 0;
+}
+.left-menu-enter-active {
+    width: 19rem;
+    transition: width 400ms;
+}
+.left-menu-exit {
+    width: 19rem;
+}
+.left-menu-exit-active {
+    width: 0;
+    transition: width 400ms;
+}

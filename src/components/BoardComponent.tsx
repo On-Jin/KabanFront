@@ -230,7 +230,7 @@ const BoardComponent = React.memo(() => {
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
                 >
-                    <div className="flex flex-col overflow-scroll w-full h-full grow px-4">
+                    <div className="flex flex-col w-full h-full grow px-4">
                         <div className="flex gap-x-6 pb-8 h-max w-max grow">
                             <SortableContext
                                 items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}

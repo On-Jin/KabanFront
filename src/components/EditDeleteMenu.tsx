@@ -37,7 +37,7 @@ export default function EditDeleteMenu({className, actionEdit, actionDelete, men
                     }}
                 >
                     <ReactSVG className={clsx("scale-[80%]", {
-                        "lg:scale-[100%]": menuSize === EditDeleteMenuSize.Big,
+                        "md:scale-[100%]": menuSize === EditDeleteMenuSize.Big,
                     })} src="/icon-vertical-ellipsis.svg"/>
                 </button>
 

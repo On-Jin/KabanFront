@@ -32,7 +32,8 @@ interface BoardState {
     board: Board,
     columnNames: string[],
     activeId: string | null,
-    isLoading: boolean
+    isLoading: boolean,
+    isMenuOpen: boolean
 }
 
 type BoardAction = {
@@ -53,7 +54,7 @@ type BoardAction = {
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
     patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
     populateMe: () => Promise<void>,
-
+    setIsMenuOpen: (isOpen: boolean) => void,
 }
 
 const client = createApolloClient();
@@ -70,6 +71,13 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     columnNames: [],
     activeId: null,
     isLoading: true,
+    isMenuOpen: false,
+    setIsMenuOpen: (isOpen: boolean) => {
+        console.log("setIsMenuOpen call")
+        set(produce((state: BoardState) => {
+            state.isMenuOpen = isOpen;
+        }));
+    },
     selectMainTaskById: (id: number): MainTask => {
         const {board} = get();
 

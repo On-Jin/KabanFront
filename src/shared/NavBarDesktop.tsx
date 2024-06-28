@@ -1,26 +1,25 @@
 ﻿// 'use client';
 import Image from "next/image";
-import logoMobile from '/public/logo-mobile.svg';
-import iconChevronDown from "/public/icon-chevron-down.svg";
-import iconVerticalEllipsis from '/public/icon-vertical-ellipsis.svg';
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
 import {useData} from "@/context/DataContext";
 import {useBoardStore} from "@/hooks/useStore";
 import React from "react";
-import clsx from "clsx";
 import useSetUrl from "@/hooks/useSetUrl";
 import EditDeleteMenu, {EditDeleteMenuSize} from "@/components/EditDeleteMenu";
 import Link from "next/link";
+import {ReactSVG} from "react-svg";
+import {useTheme} from "@/hooks/useTheme";
+import {Theme} from "@/lib/Theme";
 
 interface Props {
     isMenuOpen: boolean,
     switchIsMenuOpen: React.Dispatch<React.SetStateAction<void>>;
-    addRef: (el: HTMLElement) => void;
 }
 
-export default function NavBar(props: Props) {
+export default function NavBarDesktop(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
+    const [theme] = useTheme();
 
     const {setAddMainTaskUrl, setDeleteBoardUrl, setEditBoardUrl} = useSetUrl();
 
@@ -48,43 +47,20 @@ export default function NavBar(props: Props) {
     }
 
     return (
-        <menu className="flex justify-between px-4 py-4
+        <menu className="flex justify-between pr-6 pt-5 pb-7
                         bg-white text-k-dark-grey dark:bg-k-dark-grey dark:text-white">
-            <div className="flex space-x-4">
-                <li className="my-auto">
-                    <Image
-                        height={25}
-                        src={logoMobile} alt="logo"
-                    />
-                </li>
-                <li className="my-auto">
-                    <button
-                        ref={(el) => {
-                            if (el) props.addRef(el);
-                        }}
-                        className={clsx("heading-l flex flex-row space-x-2", {
-                            // "pointer-events-none cursor-pointer": props.isMenuOpen
-                        })}
-                        onClick={() => {
-                            props.switchIsMenuOpen();
-                        }}
-                        onMouseUp={() => {
-                        }}
-                        onMouseDown={() => {
-                        }}
-                    >
-                        <h2 className="block">
-                            {board.id == 0 ? "Kaban" : board.name}
-                        </h2>
-                        <Image
-                            className="block self-center"
-                            height={8}
-                            src={iconChevronDown} alt="icon opening board menu"
+            <div className="flex">
+                <li className="my-auto flex justify-center md:w-[260px] lg:w-[299px]" onClick={() => {props.switchIsMenuOpen(); console.log("IJWE")}}>
+                    <h1 className="heading-l space-x-2">
+                        <ReactSVG className=""
+                                  src={`/logo-${theme !== Theme.Light ? 'light' : 'dark'}.svg`}
                         />
-                    </button>
+                    </h1>
                 </li>
+                <span className="border-l border-kl-lines -mt-5 -mb-7 pr-6"/>
+                <h2 className="my-auto heading-xl">{board.id == 0 ? "" : board.name}</h2>
             </div>
-            <div className="flex space-x-4 justify-items-center items-center ">
+            <div className="flex space-x-6 justify-items-center items-center ">
                 <li
                     // onClick={callApiDidi}
                 >
@@ -100,23 +76,17 @@ export default function NavBar(props: Props) {
                 </li>
                 <li>
                     <button
-                        className="bg-k-purple px-4 h-8 flex items-center justify-center rounded-3xl disabled:opacity-25 hover:bg-kh-purple"
+                        className="bg-k-purple px-6 h-12 flex items-center justify-center rounded-3xl disabled:opacity-25 hover:bg-kh-purple"
                         disabled={board.id == 0}
                         onClick={setAddMainTaskUrl}
                     >
-                        <Image
-                            className="block"
-                            height={12}
-                            width={12}
-                            src={iconAddTaskMobile} alt="add new task"
-                        />
-                        {/*<span>Add New Task</span>*/}
+                        <span className="text-white heading-m">+ Add New Task</span>
                     </button>
                 </li>
                 <li>
                     <EditDeleteMenu
                         className="right-0 top-full mt-4 drop-shadow"
-                        menuSize={EditDeleteMenuSize.Small}
+                        menuSize={EditDeleteMenuSize.Big}
                         actionEdit={{name: "Edit Board", onClick: setEditBoardUrl}}
                         actionDelete={{name: "Delete Board", onClick: () => setDeleteBoardUrl(board.id)}}
                     />
