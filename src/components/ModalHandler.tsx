@@ -101,7 +101,6 @@ const ModalHandler = () => {
                 });
                 return;
             case ModalState.CreateBoard:
-                console.log("CR")
                 setModalState({ModalState: ModalState.CreateBoard, Id: null, MainTask: null, Board: null});
                 return;
             case ModalState.EditBoard:

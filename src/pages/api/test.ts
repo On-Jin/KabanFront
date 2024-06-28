@@ -21,7 +21,6 @@ export default async function handler(
         }
     });
 
-    console.log('AYAYAYA')
     console.log(apiLogin.status);
     res.status(apiLogin.status).json({message: await apiLogin.text()})
     res.appendHeader("Location", apiLogin.headers.get("Location")!)

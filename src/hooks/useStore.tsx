@@ -376,12 +376,10 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         }
 
         if (gql) {
-            console.log('GO');
             try {
                 const {data} = await client.mutate({mutation: gql});
                 const bb: Board = {...data.patchColumn.board};
                 if (JSON.stringify(updatedBoard) !== JSON.stringify(bb)) {
-                    console.log('DIFF');
                 }
             } catch (e) {
                 console.log(JSON.stringify(e));

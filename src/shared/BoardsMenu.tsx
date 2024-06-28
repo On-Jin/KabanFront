@@ -5,14 +5,12 @@ import clsx from "clsx";
 import {ReactSVG} from 'react-svg'
 import Link from "next/link";
 import useSetUrl from "@/hooks/useSetUrl";
-import {useBreakpoint} from "@/hooks/useBreakpoint";
 
 export default function BoardsMenu() {
     const boardInfos = useBoardStore((state) => state.boardIds);
     const board = useBoardStore((state) => state.board);
     const setIsMenuOpen = useBoardStore((state) => state.setIsMenuOpen);
     const {setAddBoardUrl} = useSetUrl();
-    const isDesktop = useBreakpoint("md");
 
     return (
         <div className="flex flex-col justify-between h-full text-k-medium-grey">
@@ -53,7 +51,13 @@ export default function BoardsMenu() {
             </div>
             <div className="ml-4 mt-4 md:m-0 md:mx-6 space-y-4 md:pb-12">
                 <SwitchTheme className=""/>
-                <button className="hidden md:flex gap-x-2 items-center heading-m"><ReactSVG src="/icon-hide-sidebar.svg"/> Hide Sidebar</button>
+                <button
+                    onClick={() => setIsMenuOpen(false)}
+                    className="hidden md:flex gap-x-2 items-center heading-m"
+                >
+                    <ReactSVG src="/icon-hide-sidebar.svg"/>
+                    Hide Sidebar
+                </button>
             </div>
         </div>
     );
