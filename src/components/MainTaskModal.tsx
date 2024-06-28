@@ -27,7 +27,7 @@ export default function MainTaskModal({mainTask, onClose}: {
             <div
                 className={clsx('space-y-6')}
             >
-                <div className="flex justify-between">
+                <div className="flex justify-between md:space-x-4">
                     <p className="heading-l">
                         {mainTask.title}
                     </p>
@@ -38,9 +38,9 @@ export default function MainTaskModal({mainTask, onClose}: {
                     />
                 </div>
                 <p className="body-l text-k-medium-grey">{mainTask.description}</p>
-                <div>
+                <div className="space-y-4">
                     <p className="body-m text-k-medium-grey">Subtasks (0 of 3)</p>
-                    <div>
+                    <div className="space-y-2">
                         {mainTask.subTasks.map(s => (
                             <KCheckbox
                                 key={s.id}
@@ -55,7 +55,7 @@ export default function MainTaskModal({mainTask, onClose}: {
 
                     </div>
                 </div>
-                <div>
+                <div className="space-y-2">
                     <p className="body-m text-k-medium-grey">Current Status</p>
                     <KDropDown
                         value={mainTask.status}

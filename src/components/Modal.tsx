@@ -40,7 +40,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(function ({onClose, childre
             }}
         >
             <div
-                className="bg-white w-full h-fit m-4 p-6 rounded-lg md:w-[480px]"
+                className="bg-white h-fit m-4 p-6 md:p-8 rounded-lg w-[343px] md:w-[480px]"
                 onClick={(e) => e.stopPropagation()}
                 onMouseUp={(e) => {
                     e.stopPropagation();

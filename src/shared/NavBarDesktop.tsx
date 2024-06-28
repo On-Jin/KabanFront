@@ -50,7 +50,9 @@ export default function NavBarDesktop(props: Props) {
         <menu className="flex justify-between pr-6 md:py-4 lg:py-5
                         bg-white text-k-dark-grey dark:bg-k-dark-grey dark:text-white">
             <div className="flex">
-                <li className="my-auto flex justify-center md:w-[260px] lg:w-[299px]" onClick={() => {props.switchIsMenuOpen(); console.log("IJWE")}}>
+                <li className="my-auto flex justify-center md:w-[260px] lg:w-[299px]" onClick={() => {
+                    props.switchIsMenuOpen();
+                }}>
                     <h1 className="heading-l space-x-2">
                         <ReactSVG className=""
                                   src={`/logo-${theme !== Theme.Light ? 'light' : 'dark'}.svg`}
