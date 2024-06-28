@@ -13,7 +13,7 @@ import {
     MOVE_MAINTASK,
     moveColumnMutation,
     moveMainTask, PATCH_BOARD, PATCH_COLUMN, PATCH_MAINTASK,
-    PATCH_SUBTASK, UPDATE_MAINTASK
+    PATCH_SUBTASK, POPULATE_ME, UPDATE_MAINTASK
 } from "@/lib/gqlMutation";
 import {arrayMove} from "@/lib/Utils";
 import {Column} from "@/lib/types/Column";
@@ -52,6 +52,7 @@ type BoardAction = {
     addColumn: (title: string) => Promise<void>,
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
     patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
+    populateMe: () => Promise<void>,
 
 }
 
@@ -91,7 +92,7 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
     },
     fetchBoard: async (id: number) => {
         console.log("fetchboard")
-        const {data} = await client.query({query: GET_BOARD_BY_ID_QUERY, variables: {id}});
+        const {data} = await client.query({query: GET_BOARD_BY_ID_QUERY, variables: {id}})
         set((state) => ({
             board: {...data.board},
             columnNames: generateColumnName(data.board.columns),
@@ -167,6 +168,19 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         set(produce((state: BoardState) => {
             state.board = data.patchBoard.board
         }));
+    },
+    populateMe: async () => {
+        try {
+            const {data} = await client.mutate({
+                mutation: POPULATE_ME, variables: {
+                    input: {
+                        name: ""
+                    }
+                },
+            });
+        } catch (e) {
+            console.log(JSON.stringify(e, null, 2))
+        }
     },
     addBoard: async (name: string, columnNames: string[]) => {
         const {data} = await client.mutate({

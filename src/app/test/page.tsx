@@ -4,8 +4,11 @@ import Image from "next/image";
 import SwitchTheme from "@/components/SwitchTheme";
 import React from "react";
 import Link from "next/link";
+import {useBoardStore} from "@/hooks/useStore";
 
 export default function Home() {
+    const populateMe = useBoardStore((state) => state.populateMe);
+
     async function callApiLogin() {
         const response = await fetch("/api/login", {
             method: "GET"
@@ -14,7 +17,7 @@ export default function Home() {
     }
 
     async function callApiDidi() {
-        const response = await fetch("/api/didi", {
+        const response = await fetch("/api/discord-login", {
             method: "GET",
             headers: {
                 "Access-Control-Allow-Origin": "*"
@@ -57,6 +60,7 @@ export default function Home() {
             <button type="button" onClick={callApiMe}>Me</button>
             <a href={`${process.env.API_PROXY}/didi`}>Test</a>
             <Link href="/">Home</Link>
+            <button onClick={populateMe}>Populate</button>
 
         </main>
     );
