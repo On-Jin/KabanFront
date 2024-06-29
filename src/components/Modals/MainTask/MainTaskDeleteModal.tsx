@@ -33,22 +33,24 @@ export default function MainTaskDeleteModal({mainTask, onClose}: {
                     Are you sure you want to delete the ‘{mainTask.title}’ task and its subtasks?
                     This action cannot be reversed.
                 </p>
-                <KButton
-                    disabled={isProcess}
-                    onClick={deleteMainTaskHandler}
-                    buttonSize={KButtonSize.Small}
-                    buttonType={KButtonType.Destructive}
-                >
-                    {isProcess ? <KProcessing/> : 'Delete'}
-                </KButton>
-                <KButton
-                    disabled={isProcess}
-                    onClick={onClose}
-                    buttonSize={KButtonSize.Small}
-                    buttonType={KButtonType.Secondary}
-                >
-                    Cancel
-                </KButton>
+                <div className="space-y-6 md:space-y-0 md:flex md:space-x-4">
+                    <KButton
+                        disabled={isProcess}
+                        onClick={deleteMainTaskHandler}
+                        buttonSize={KButtonSize.Small}
+                        buttonType={KButtonType.Destructive}
+                    >
+                        {isProcess ? <KProcessing/> : 'Delete'}
+                    </KButton>
+                    <KButton
+                        disabled={isProcess}
+                        onClick={onClose}
+                        buttonSize={KButtonSize.Small}
+                        buttonType={KButtonType.Secondary}
+                    >
+                        Cancel
+                    </KButton>
+                </div>
             </div>
         </>
     );

@@ -33,22 +33,24 @@ export default function BoardDeleteModal({board, onCancel, onDeleted}: {
                     Are you sure you want to delete the ‘{board.name}’ board? This action will remove all columns and
                     tasks and cannot be reversed.
                 </p>
-                <KButton
-                    disabled={isProcess}
-                    onClick={deleteBoardHandler}
-                    buttonSize={KButtonSize.Small}
-                    buttonType={KButtonType.Destructive}
-                >
-                    {isProcess ? <KProcessing/> : 'Delete'}
-                </KButton>
-                <KButton
-                    disabled={isProcess}
-                    onClick={onCancel}
-                    buttonSize={KButtonSize.Small}
-                    buttonType={KButtonType.Secondary}
-                >
-                    Cancel
-                </KButton>
+                <div className="space-y-6 md:space-y-0 md:flex md:space-x-4">
+                    <KButton
+                        disabled={isProcess}
+                        onClick={deleteBoardHandler}
+                        buttonSize={KButtonSize.Small}
+                        buttonType={KButtonType.Destructive}
+                    >
+                        {isProcess ? <KProcessing/> : 'Delete'}
+                    </KButton>
+                    <KButton
+                        disabled={isProcess}
+                        onClick={onCancel}
+                        buttonSize={KButtonSize.Small}
+                        buttonType={KButtonType.Secondary}
+                    >
+                        Cancel
+                    </KButton>
+                </div>
             </div>
         </>
     );
