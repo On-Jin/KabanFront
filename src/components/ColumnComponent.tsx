@@ -13,6 +13,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import React, {useEffect} from "react";
 import {useBoardStore} from "@/hooks/useStore";
+import ComponentCircleColor from "@/components/ColumnCircleColor";
 
 const ColumnComponent = React.memo(({column, mainTaskListIds, isDragElement}: {
         column: Column,
@@ -55,9 +56,9 @@ const ColumnComponent = React.memo(({column, mainTaskListIds, isDragElement}: {
                 >
                     <div className="">
                         <div className="flex gap-x-3">
-                            <div className="w-[15px] h-[15px] bg-[#49C4E5] rounded-full"></div>
+                            <ComponentCircleColor columnId={column.id}/>
                             <p className="pb-6 heading-s text-k-medium-grey">
-                                {column.name} ({column.mainTasks.length}) {column.id}
+                                {column.name} ({column.mainTasks.length})
                             </p>
                         </div>
                         <div className="space-y-5 w-[280px]">

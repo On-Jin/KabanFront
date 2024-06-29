@@ -50,7 +50,7 @@ export default function NavBarDesktop(props: Props) {
         <menu className="flex justify-between pr-6 md:py-4 lg:py-5
                         bg-white text-k-dark-grey dark:bg-k-dark-grey dark:text-white">
             <div className="flex">
-                <li className="my-auto flex justify-center md:w-[260px] lg:w-[299px]" onClick={() => {
+                <li className="my-auto flex justify-center md:w-[259px] lg:w-[299px]" onClick={() => {
                     props.switchIsMenuOpen();
                 }}>
                     <h1 className="heading-l space-x-2">
@@ -59,7 +59,7 @@ export default function NavBarDesktop(props: Props) {
                         />
                     </h1>
                 </li>
-                <span className="border-l border-kl-lines -mt-5 -mb-7 pr-6"/>
+                <span className="border-l border-kl-lines -mt-5 md:-mb-4 lg:-mb-5 pr-6"/>
                 <h2 className="my-auto heading-xl">{board.id == 0 ? "" : board.name}</h2>
             </div>
             <div className="flex space-x-6 justify-items-center items-center ">
