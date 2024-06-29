@@ -16,6 +16,8 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
     isProcess: boolean,
 }) {
 
+    const placeHolderSelect = ["e.g. Make coffee", "e.g. Drink coffee & smile"]
+
     const columnNames = useBoardStore((state) => state.columnNames);
 
     const {register, setValue, control, handleSubmit, watch, formState: {errors}} = useForm<InputMainTask>(
@@ -27,7 +29,7 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                 subtasks: mainTask.subTasks.map(s => ({
                     id: s.id,
                     title: s.title,
-                    isNew: false
+                    isNew: s.id == 0 // If id == 0, parent component added default subtask to add
                 }))
             }
         }
@@ -40,16 +42,20 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
     });
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
+        <form
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit)}
+        >
+            <div className="space-y-2">
                 <p className="body-m text-k-medium-grey">Title</p>
                 <KStringput
                     disabled={isProcess}
                     error={errors.title}
+                    placeholder="e.g. Take coffee break"
                     {...register("title", {required: true})}
                 />
             </div>
-            <div>
+            <div className="space-y-2">
                 <p className="body-m text-k-medium-grey">Description</p>
                 <KStringput
                     className="break-words h-28"
@@ -59,44 +65,46 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                     {...register("description", {required: false})}
                 />
             </div>
-            <div>
+            <div className="space-y-2">
                 <p className="body-m text-k-medium-grey">Subtaks</p>
-                {fields.map((subTask, index) => (
-                    <div key={subTask.id} className="flex items-center gap-x-4">
-                        <KStringput
-                            className="grow"
-                            error={errors.subtasks?.[index] as FieldError}
-                            disabled={isProcess}
-                            placeholder={"..."}
-                            {...register(`subtasks.${index}.title`, {required: true})}
-                        />
-
-                        <button
-                            className="disabled:opacity-50 group"
-                            disabled={isProcess} onClick={() => remove(index)}
-                        >
-                            <Image
-                                className="h-full w-4 group-enabled:hover:brightness-0"
-                                src={crossIcon}
-                                alt="remove subtask"
-
+                <div className="space-y-3">
+                    {fields.map((subTask, index) => (
+                        <div key={subTask.id} className="flex items-center gap-x-4">
+                            <KStringput
+                                className="grow"
+                                error={errors.subtasks?.[index] as FieldError}
+                                disabled={isProcess}
+                                placeholder={placeHolderSelect[index % 2]}
+                                {...register(`subtasks.${index}.title`, {required: true})}
                             />
-                        </button>
-                    </div>
-                ))}
 
-                <KButton
-                    buttonSize={KButtonSize.Small}
-                    buttonType={KButtonType.Secondary}
-                    disabled={isProcess}
-                    onClick={() => {
-                        append({title: "", id: Math.max(...fields.map(f => f.id)) + 1, isNew: true});
-                    }}
-                >
-                    <>+ Add New Task</>
-                </KButton>
+                            <button
+                                className="disabled:opacity-50 group"
+                                disabled={isProcess} onClick={() => remove(index)}
+                            >
+                                <Image
+                                    className="h-full w-4 group-enabled:hover:brightness-0"
+                                    src={crossIcon}
+                                    alt="remove subtask"
+
+                                />
+                            </button>
+                        </div>
+                    ))}
+
+                    <KButton
+                        buttonSize={KButtonSize.Small}
+                        buttonType={KButtonType.Secondary}
+                        disabled={isProcess}
+                        onClick={() => {
+                            append({title: "", id: Math.max(...fields.map(f => f.id)) + 1, isNew: true});
+                        }}
+                    >
+                        <>+ Add New Task</>
+                    </KButton>
+                </div>
             </div>
-            <div>
+            <div className="space-y-2">
                 <p className="body-m text-k-medium-grey">Status</p>
                 <KDropDown
                     value={watch("status")}

@@ -11,7 +11,13 @@ export default function MainTaskCreateModal({onClose}: {
 }) {
     const [isProcess, setIsProcess] = useState(false);
     const columnNames = useBoardStore((state) => state.columnNames);
-    const mainTask: MainTask = {description: "", id: 0, status: columnNames[0], subTasks: [], title: ""};
+    const mainTask: MainTask = {
+        description: "",
+        id: 0,
+        status: columnNames[0],
+        subTasks: [{id: 0, isCompleted: false, title: ""}, {id: 1, isCompleted: false, title: ""}],
+        title: ""
+    };
     const addMainTask = useBoardStore((state) => state.addMainTask);
     usePointerEvents(isProcess);
 

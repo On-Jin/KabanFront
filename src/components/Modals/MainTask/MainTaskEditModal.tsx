@@ -29,7 +29,6 @@ export default function MainTaskEditModal({mainTask, onClose}: {
 
     return (
         <>
-            <button onClick={() => setIsProcess(!isProcess)}>switch {`${isProcess}`}</button>
             <div className="space-y-6">
                 <p className="heading-l">
                     Edit Task
