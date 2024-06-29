@@ -89,7 +89,7 @@ export default function Content({children}: { children: React.ReactNode }) {
                     "md:w-[260px] lg:w-[300px]": isMenuOpen,
                 })}>
                 </div>
-                <div className="overflow-auto flex-grow">
+                <div className="overflow-auto flex flex-grow">
                     {children}
                 </div>
             </main>
