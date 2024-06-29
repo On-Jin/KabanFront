@@ -46,6 +46,7 @@ export default function MainTaskModal({mainTask, onClose}: {
                                 key={s.id}
                                 value={s.isCompleted}
                                 updateCheckbox={() => {
+                                    console.log(s.id)
                                     setSubTaskComplete(s.id);
                                 }}
                             >

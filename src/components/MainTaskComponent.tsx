@@ -48,7 +48,6 @@ export default function MainTaskComponent({mainTask, isDragElement}: {
                     "invisible": !isDragElement && `${DND_MAINTASK_PREFIX}${mainTask.id}` === activeId
                 }
             )}
-
             ref={setNodeRef}
             style={style}
             {...attributes}
@@ -62,7 +61,7 @@ export default function MainTaskComponent({mainTask, isDragElement}: {
                     {mainTask.title}
                 </p>
                 <p className="body-m text-k-medium-grey">
-                    0 of {mainTask.subTasks.length} substasks [{mainTask.id}]
+                    {mainTask.subTasks.filter(s => s.isCompleted).length} of {mainTask.subTasks.length} substasks
                 </p>
             </div>
         </div>
