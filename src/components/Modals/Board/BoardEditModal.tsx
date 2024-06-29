@@ -1,11 +1,11 @@
 ﻿import {FieldError, SubmitHandler, useFieldArray, useForm} from "react-hook-form"
 import {useState} from "react";
 import usePointerEvents from "@/hooks/usePointerEvents";
-import KStringput from "@/components/KStringput";
+import KStringput from "@/components/K/KStringput";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
-import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
-import KProcessing from "@/components/KProcessing";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
+import KProcessing from "@/components/K/KProcessing";
 import {useBoardStore} from "@/hooks/useStore";
 import {InputBoard} from "@/lib/forms/InputBoard";
 import {InputColumn} from "@/lib/forms/InputColumn";

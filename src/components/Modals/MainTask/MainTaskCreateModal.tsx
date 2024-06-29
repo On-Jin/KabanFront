@@ -1,14 +1,14 @@
-﻿import KDropDown from "@/components/KDropDown";
-import KStringput from "@/components/KStringput";
+﻿import KDropDown from "@/components/K/KDropDown";
+import KStringput from "@/components/K/KStringput";
 import {useBoardStore} from "@/hooks/useStore";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
-import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
 import {useState} from "react";
 import {MainTask} from "@/lib/types/MainTask";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
-import KProcessing from "@/components/KProcessing";
+import KProcessing from "@/components/K/KProcessing";
 import usePointerEvents from "@/hooks/usePointerEvents";
 
 export default function MainTaskCreateModal({onClose}: {
@@ -54,9 +54,8 @@ export default function MainTaskCreateModal({onClose}: {
     return (
         <>
             <div className="space-y-6">
-                <button onClick={() => setIsProcess(!isProcess)}>switch {`${isProcess}`}</button>
                 <p className="heading-l">
-                    Create Task
+                    Add New Task
                 </p>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>

@@ -2,19 +2,22 @@
 import {useRouter} from 'next/navigation'
 import {usePathname, useSearchParams,} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react'
-import Modal from "@/components/Modal";
-import MainTaskModal from "@/components/MainTaskModal";
-import MainTaskEditModal from "@/components/MainTaskEditModal";
+import Modal from "@/components/Modals/Modal";
 import {CSSTransition} from "react-transition-group";
 import ReactDOM from "react-dom";
-import MainTaskCreateModal from "@/components/MainTaskCreateModal";
 import {MainTask} from "@/lib/types/MainTask";
 import {useBoardStore} from "@/hooks/useStore";
-import BoardCreateModal from "@/components/BoardCreateModal";
-import BoardEditModal from "@/components/BoardEditModal";
-import MainTaskDeleteModal from "@/components/MainTaskDeleteModal";
-import BoardDeleteModal from "@/components/BoardDeleteModal";
 import {Board} from "@/lib/types/Board";
+
+import BoardCreateModal from "@/components/Modals/Board/BoardCreateModal";
+import BoardEditModal from "@/components/Modals/Board/BoardEditModal";
+import BoardDeleteModal from "@/components/Modals/Board/BoardDeleteModal";
+
+import MainTaskEditModal from "@/components/Modals/MainTask/MainTaskEditModal";
+import MainTaskCreateModal from "@/components/Modals/MainTask/MainTaskCreateModal";
+import MainTaskDeleteModal from "@/components/Modals/MainTask/MainTaskDeleteModal";
+import MainTaskModal from "@/components/Modals/MainTask/MainTaskModal";
+
 
 export enum ModalState {
     None,

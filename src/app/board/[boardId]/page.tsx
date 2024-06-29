@@ -4,7 +4,7 @@ import {usePathname, useSearchParams} from "next/navigation";
 import {useParams} from 'next/navigation';
 import {useBoardStore} from "@/hooks/useStore";
 import BoardComponent from "@/components/BoardComponent";
-import ModalHandler from "@/components/ModalHandler";
+import ModalHandler from "@/components/Modals/ModalHandler";
 
 export default function BoardPage() {
     const pathname = usePathname();

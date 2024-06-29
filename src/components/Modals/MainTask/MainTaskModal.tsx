@@ -1,5 +1,5 @@
-﻿import KCheckbox from "@/components/KCheckbox";
-import KDropDown from "@/components/KDropDown";
+﻿import KCheckbox from "@/components/K/KCheckbox";
+import KDropDown from "@/components/K/KDropDown";
 import React, {useState} from "react";
 import {useBoardStore} from "@/hooks/useStore";
 import clsx from "clsx";

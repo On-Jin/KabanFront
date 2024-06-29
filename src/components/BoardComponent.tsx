@@ -17,7 +17,7 @@ import {DND_COLUMN_PREFIX, DND_MAINTASK_PREFIX} from "@/lib/Constant";
 import MainTaskComponent from "@/components/MainTaskComponent";
 import {createPortal} from "react-dom";
 import {useBoardStore} from "@/hooks/useStore";
-import KProcessing from "@/components/KProcessing";
+import KProcessing from "@/components/K/KProcessing";
 import clsx from "clsx";
 
 const BoardComponent = React.memo(() => {

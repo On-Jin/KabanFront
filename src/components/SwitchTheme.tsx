@@ -5,7 +5,7 @@ import {Theme} from "@/lib/Theme";
 import {ReactSVG} from "react-svg";
 import clsx from "clsx";
 import React from "react";
-import {KSwitch} from "@/components/KSwitch";
+import {KSwitch} from "@/components/K/KSwitch";
 
 
 export default function SwitchTheme({className}: { className?: string }) {

@@ -1,24 +1,24 @@
 ﻿import {useBoardStore} from "@/hooks/useStore";
-import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 import {useState} from "react";
-import {MainTask} from "@/lib/types/MainTask";
-import KProcessing from "@/components/KProcessing";
+import KProcessing from "@/components/K/KProcessing";
 import usePointerEvents from "@/hooks/usePointerEvents";
 import clsx from "clsx";
+import {Board} from "@/lib/types/Board";
 
-export default function MainTaskDeleteModal({mainTask, onClose}: {
-    mainTask: MainTask,
-    onClose: () => void
+export default function BoardDeleteModal({board, onCancel, onDeleted}: {
+    board: Board,
+    onCancel: () => void,
+    onDeleted: (newFetchedBoardId: number | null) => void
 }) {
     const [isProcess, setIsProcess] = useState(false);
-    const deleteMainTask = useBoardStore((state) => state.deleteMainTask);
-    usePointerEvents(isProcess);
+    const deleteBoard = useBoardStore((state) => state.deleteBoard);
     usePointerEvents(isProcess);
 
-    async function deleteMainTaskHandler() {
+    async function deleteBoardHandler() {
         setIsProcess(true);
-        await deleteMainTask(mainTask.id);
-        onClose();
+        const newFetchedBoardId = await deleteBoard(board.id);
+        onDeleted(newFetchedBoardId);
         setIsProcess(false);
     }
 
@@ -28,14 +28,14 @@ export default function MainTaskDeleteModal({mainTask, onClose}: {
             <div
                 className={clsx("space-y-6", {"opacity-50": isProcess})}
             >
-                <p className="text-k-red heading-l">Delete this task?</p>
+                <p className="text-k-red heading-l">Delete this board?</p>
                 <p className="body-l text-k-medium-grey">
-                    Are you sure you want to delete the ‘{mainTask.title}’ task and its subtasks?
-                    This action cannot be reversed.
+                    Are you sure you want to delete the ‘{board.name}’ board? This action will remove all columns and
+                    tasks and cannot be reversed.
                 </p>
                 <KButton
                     disabled={isProcess}
-                    onClick={deleteMainTaskHandler}
+                    onClick={deleteBoardHandler}
                     buttonSize={KButtonSize.Small}
                     buttonType={KButtonType.Destructive}
                 >
@@ -43,7 +43,7 @@ export default function MainTaskDeleteModal({mainTask, onClose}: {
                 </KButton>
                 <KButton
                     disabled={isProcess}
-                    onClick={onClose}
+                    onClick={onCancel}
                     buttonSize={KButtonSize.Small}
                     buttonType={KButtonType.Secondary}
                 >

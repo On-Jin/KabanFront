@@ -1,12 +1,11 @@
 ﻿'use client'
 import Image from "next/image";
 import logo from '/public/logo-dark.svg';
-import iconCheck from '/public/icon-check.svg';
 import {useEffect, useState} from "react";
-import KCheckbox from "@/components/KCheckbox";
-import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
-import KStringput from "@/components/KStringput";
-import KDropDown from "@/components/KDropDown";
+import KCheckbox from "@/components/K/KCheckbox";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
+import KStringput from "@/components/K/KStringput";
+import KDropDown from "@/components/K/KDropDown";
 
 const data = {
     colors: [

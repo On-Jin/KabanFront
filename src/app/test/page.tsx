@@ -1,6 +1,5 @@
 'use client';
 
-import Image from "next/image";
 import SwitchTheme from "@/components/SwitchTheme";
 import React from "react";
 import Link from "next/link";

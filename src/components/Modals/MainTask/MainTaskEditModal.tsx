@@ -1,12 +1,12 @@
-﻿import KDropDown from "@/components/KDropDown";
-import KStringput from "@/components/KStringput";
+﻿import KDropDown from "@/components/K/KDropDown";
+import KStringput from "@/components/K/KStringput";
 import {useBoardStore} from "@/hooks/useStore";
 import Image from "next/image";
 import crossIcon from '/public/icon-cross.svg';
-import KButton, {KButtonSize, KButtonType} from "@/components/KButton";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 import {useForm, SubmitHandler, useFieldArray, FieldError} from "react-hook-form"
 import {useState} from "react";
-import KProcessing from "@/components/KProcessing";
+import KProcessing from "@/components/K/KProcessing";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
 import usePointerEvents from "@/hooks/usePointerEvents";
 import {MainTask} from "@/lib/types/MainTask";

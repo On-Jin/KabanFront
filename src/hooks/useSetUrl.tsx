@@ -1,5 +1,5 @@
 ﻿import {useSearchParams, usePathname, useRouter} from 'next/navigation';
-import {ModalState} from "@/components/ModalHandler";
+import {ModalState} from "@/components/Modals/ModalHandler";
 
 const useTaskUrl = () => {
     const searchParams = useSearchParams();
