@@ -223,14 +223,14 @@ const BoardComponent = React.memo(() => {
         const dragElement = generateActiveDragElement();
 
         return (
-            <div className="flex flex-col grow pt-6">
+            <div className="flex flex-col grow pt-6 px-4 md:px-6">
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
                 >
-                    <div className="flex flex-col w-full h-full grow px-4">
+                    <div className="flex flex-col w-full h-full grow">
                         <div className="flex gap-x-6 pb-8 h-max w-max grow">
                             <SortableContext
                                 items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
@@ -246,7 +246,7 @@ const BoardComponent = React.memo(() => {
                                 }
                             </SortableContext>
                             <div
-                                className="shrink-0 grow w-[280px] flex flex-col"
+                                className="w-[280px] flex flex-col"
                             >
                                 <div>
                                     <p className="pb-6 heading-s text-transparent">
@@ -254,7 +254,8 @@ const BoardComponent = React.memo(() => {
                                     </p>
                                 </div>
                                 <div
-                                    className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] flex items-center justify-center rounded-lg">
+                                    className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] dark:from-[#2e2e38] dark:to-[#393946]
+                                                flex items-center justify-center rounded-lg">
                                     <button
                                         className={clsx("heading-xl text-k-medium-grey hover:enabled:text-k-purple", {
                                             "pointer-events-none": isProcessAddColumn

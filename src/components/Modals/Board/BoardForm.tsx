@@ -1,13 +1,12 @@
 ﻿import {FieldError, SubmitHandler, useFieldArray, useForm} from "react-hook-form"
 import usePointerEvents from "@/hooks/usePointerEvents";
 import KStringput from "@/components/K/KStringput";
-import Image from "next/image";
-import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 import KProcessing from "@/components/K/KProcessing";
 import {InputBoard} from "@/lib/forms/InputBoard";
 import {InputColumn} from "@/lib/forms/InputColumn";
 import {Board} from "@/lib/types/Board";
+import {ReactSVG} from "react-svg";
 
 export default function BoardForm({onClose, isProcess, onSubmit, board, prefixBoardOnTitle, submitButtonText}: {
     onClose: () => void,
@@ -46,7 +45,7 @@ export default function BoardForm({onClose, isProcess, onSubmit, board, prefixBo
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="space-y-2">
-                    <p className="body-m text-k-medium-grey">
+                    <p className="body-m text-k-medium-grey dark:text-white">
                         {prefixBoardOnTitle ? "Board" : ""} Name
                     </p>
                     <KStringput
@@ -57,7 +56,7 @@ export default function BoardForm({onClose, isProcess, onSubmit, board, prefixBo
                     />
                 </div>
                 <div className="space-y-2">
-                    <p className="body-m text-k-medium-grey">{prefixBoardOnTitle ? "Board" : ""} Columns</p>
+                    <p className="body-m text-k-medium-grey dark:text-white">{prefixBoardOnTitle ? "Board" : ""} Columns</p>
                     <div className="space-y-3">
                         {fields.map((subTask, index) => (
                             <div key={subTask.id} className="flex items-center gap-x-4">
@@ -74,11 +73,9 @@ export default function BoardForm({onClose, isProcess, onSubmit, board, prefixBo
                                     className="disabled:opacity-50 group"
                                     disabled={isProcess} onClick={() => remove(index)}
                                 >
-                                    <Image
-                                        className="h-full w-4 group-enabled:hover:brightness-0"
-                                        src={crossIcon}
-                                        alt="remove subtask"
-
+                                    <ReactSVG
+                                        className="h-full w-4  fill-[#828FA3] hover:fill-k-black hover:dark:fill-k-red"
+                                        src="/icon-cross.svg"
                                     />
                                 </button>
                             </div>

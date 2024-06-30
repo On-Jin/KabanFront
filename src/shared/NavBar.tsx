@@ -2,7 +2,6 @@
 import Image from "next/image";
 import logoMobile from '/public/logo-mobile.svg';
 import iconChevronDown from "/public/icon-chevron-down.svg";
-import iconVerticalEllipsis from '/public/icon-vertical-ellipsis.svg';
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
 import {useData} from "@/context/DataContext";
 import {useBoardStore} from "@/hooks/useStore";
@@ -21,6 +20,7 @@ interface Props {
 export default function NavBar(props: Props) {
     const {data} = useData();
     const board = useBoardStore((state) => state.board);
+    const columnNames = useBoardStore((state) => state.columnNames);
 
     const {setAddMainTaskUrl, setDeleteBoardUrl, setEditBoardUrl} = useSetUrl();
 
@@ -101,7 +101,7 @@ export default function NavBar(props: Props) {
                 <li>
                     <button
                         className="bg-k-purple px-4 h-8 flex items-center justify-center rounded-3xl disabled:opacity-25 hover:bg-kh-purple"
-                        disabled={board.id == 0}
+                        disabled={board.id == 0 || columnNames.length == 0}
                         onClick={setAddMainTaskUrl}
                     >
                         <Image
@@ -110,7 +110,6 @@ export default function NavBar(props: Props) {
                             width={12}
                             src={iconAddTaskMobile} alt="add new task"
                         />
-                        {/*<span>Add New Task</span>*/}
                     </button>
                 </li>
                 <li>

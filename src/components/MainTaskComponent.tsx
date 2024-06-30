@@ -56,7 +56,7 @@ export default function MainTaskComponent({mainTask, isDragElement}: {
                 handleOpenModal();
             }}
         >
-            <div>
+            <div className="space-y-2">
                 <p className="heading-m">
                     {mainTask.title}
                 </p>

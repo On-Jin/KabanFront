@@ -25,7 +25,7 @@ export default function BoardPage() {
         <>
             {!isFetching && (
                 <>
-                    <div className="touch-manipulation w-full grow flex flex-col">
+                    <div className="touch-manipulation grow flex flex-col">
                         <BoardComponent/>
                     </div>
                     <ModalHandler/>

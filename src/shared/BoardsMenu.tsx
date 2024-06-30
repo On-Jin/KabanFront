@@ -13,13 +13,15 @@ export default function BoardsMenu() {
     const {setAddBoardUrl} = useSetUrl();
 
     return (
-        <div className="flex flex-col justify-between h-full text-k-medium-grey">
+        <div className="flex flex-col justify-between h-full text-k-medium-grey md:max-w-full md:w-full pr-6
+                        border-kl-lines dark:border-kd-lines md:border-r"
+        >
             <div className="">
                 <p className="heading-s pb-5 pl-6 lg:pl-8">ALL BOARDS ({boardInfos?.length})</p>
                 <menu className="heading-m [&>*]:pl-6 lg:[&>*]:pl-8">
                     {boardInfos?.map(b => (
                         <li key={b.id}
-                            className={clsx("py-3.5 pr-14 rounded-r-full", {
+                            className={clsx("py-3.5 rounded-r-full", {
                                 "bg-k-purple text-white": b.id === board.id
                             })}
                         >
@@ -34,7 +36,7 @@ export default function BoardsMenu() {
                         </li>
                     ))}
                     <li
-                        className={clsx("flex items-center gap-x-3 py-3.5 pr-14 rounded-r-full")}
+                        className={clsx("flex items-center gap-x-3 py-3.5 rounded-r-full")}
                     >
                         <ReactSVG className={clsx("w-4 h-4 fill-k-purple")} src="/icon-board.svg"/>
                         <button
@@ -49,13 +51,17 @@ export default function BoardsMenu() {
                     </li>
                 </menu>
             </div>
-            <div className="ml-4 mt-4 md:m-0 md:mx-6 space-y-4 md:pb-12">
-                <SwitchTheme className=""/>
+            <div className="ml-6 mt-4 md:m-0 space-y-4 md:pb-12">
+                <SwitchTheme className="md:ml-6"/>
                 <button
                     onClick={() => setIsMenuOpen(false)}
-                    className="hidden md:flex gap-x-2 items-center heading-m"
+                    className="hidden md:flex w-full pl-6 py-3.5 gap-x-2 items-center heading-m rounded-r-full
+                                hover:dark:bg-white hover:bg-k-purple hover:bg-opacity-10
+                                hover:text-k-purple
+                                group
+                                "
                 >
-                    <ReactSVG src="/icon-hide-sidebar.svg"/>
+                    <ReactSVG className="fill-[#828FA3] group-hover:fill-k-purple" src="/icon-hide-sidebar.svg"/>
                     Hide Sidebar
                 </button>
             </div>

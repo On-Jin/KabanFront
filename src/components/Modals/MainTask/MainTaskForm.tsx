@@ -1,13 +1,12 @@
 ﻿import {MainTask} from "@/lib/types/MainTask";
 import KStringput from "@/components/K/KStringput";
 import {FieldError, SubmitHandler, useFieldArray, useForm} from "react-hook-form";
-import Image from "next/image";
-import crossIcon from '/public/icon-cross.svg';
 import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 import KDropDown from "@/components/K/KDropDown";
 import KProcessing from "@/components/K/KProcessing";
 import {useBoardStore} from "@/hooks/useStore";
 import {InputMainTask} from "@/lib/forms/InputMainTask";
+import {ReactSVG} from "react-svg";
 
 export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
     mainTask: MainTask,
@@ -47,7 +46,7 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
             onSubmit={handleSubmit(onSubmit)}
         >
             <div className="space-y-2">
-                <p className="body-m text-k-medium-grey">Title</p>
+                <p className="body-m text-k-medium-grey dark:text-white">Title</p>
                 <KStringput
                     disabled={isProcess}
                     error={errors.title}
@@ -56,7 +55,7 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                 />
             </div>
             <div className="space-y-2">
-                <p className="body-m text-k-medium-grey">Description</p>
+                <p className="body-m text-k-medium-grey dark:text-white">Description</p>
                 <KStringput
                     className="break-words h-28"
                     disabled={isProcess}
@@ -66,7 +65,7 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                 />
             </div>
             <div className="space-y-2">
-                <p className="body-m text-k-medium-grey">Subtaks</p>
+                <p className="body-m text-k-medium-grey dark:text-white">Subtaks</p>
                 <div className="space-y-3">
                     {fields.map((subTask, index) => (
                         <div key={subTask.id} className="flex items-center gap-x-4">
@@ -82,11 +81,9 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                                 className="disabled:opacity-50 group"
                                 disabled={isProcess} onClick={() => remove(index)}
                             >
-                                <Image
-                                    className="h-full w-4 group-enabled:hover:brightness-0"
-                                    src={crossIcon}
-                                    alt="remove subtask"
-
+                                <ReactSVG
+                                    className="h-full w-4  fill-[#828FA3] hover:fill-k-red"
+                                    src="/icon-cross.svg"
                                 />
                             </button>
                         </div>
@@ -105,7 +102,7 @@ export default function MainTaskForm({mainTask, onClose, onSubmit, isProcess}: {
                 </div>
             </div>
             <div className="space-y-2">
-                <p className="body-m text-k-medium-grey">Status</p>
+                <p className="body-m text-k-medium-grey dark:text-white">Status</p>
                 <KDropDown
                     value={watch("status")}
                     options={columnNames}

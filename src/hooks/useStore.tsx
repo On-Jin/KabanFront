@@ -218,6 +218,7 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         });
         set(produce((state: BoardState) => {
             state.board.columns.push(data.addColumn.column);
+            state.columnNames = generateColumnName(state.board.columns)
         }));
     },
     addMainTask: async (title: string, description?: string, status?: string, subTaskTitles?: string[]) => {

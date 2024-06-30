@@ -44,7 +44,8 @@ export default function EditDeleteMenu({className, actionEdit, actionDelete, men
                 {isMenuOpen && (
                     <div
                         ref={(el) => addRef(el)}
-                        className={clsx(`absolute rounded-lg p-4 space-y-4 w-[190px] bg-white body-l ${className}`,
+                        className={clsx(`bg-white dark:bg-k-dark-grey
+                                        absolute rounded-lg p-4 space-y-4 w-[190px] body-l ${className}`,
                             {
                                 "left-1/2 transform -translate-x-1/2 top-[100%]": !className
                             }

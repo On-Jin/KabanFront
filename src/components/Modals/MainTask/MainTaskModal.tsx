@@ -37,9 +37,9 @@ export default function MainTaskModal({mainTask, onClose}: {
                         actionDelete={{name: "Delete Task", onClick: () => setDeleteTaskModalUrl(mainTask.id)}}
                     />
                 </div>
-                <p className="body-l text-k-medium-grey">{mainTask.description}</p>
+                <p className="body-l text-k-medium-grey dark:text-white">{mainTask.description}</p>
                 <div className="space-y-4">
-                    <p className="body-m text-k-medium-grey">Subtasks (0 of 3)</p>
+                    <p className="body-m text-k-medium-grey dark:text-white">Subtasks (0 of 3)</p>
                     <div className="space-y-2">
                         {mainTask.subTasks.map(s => (
                             <KCheckbox
@@ -57,7 +57,7 @@ export default function MainTaskModal({mainTask, onClose}: {
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <p className="body-m text-k-medium-grey">Current Status</p>
+                    <p className="body-m text-k-medium-grey dark:text-white">Current Status</p>
                     <KDropDown
                         value={mainTask.status}
                         options={columnNames}
