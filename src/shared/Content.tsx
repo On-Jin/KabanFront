@@ -26,7 +26,7 @@ export default function Content({children}: { children: React.ReactNode }) {
                 switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
                 isMenuOpen={isMenuOpen}/>}
 
-            <main className={clsx("relative flex-grow flex")}>
+            <main className={clsx("relative flex-grow flex overflow-hidden")}>
                 <CSSTransition
                     in={isMenuOpen}
                     timeout={400}
