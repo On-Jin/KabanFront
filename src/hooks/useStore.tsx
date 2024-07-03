@@ -53,7 +53,7 @@ type BoardAction = {
     addColumn: (title: string) => Promise<void>,
     addBoard: (name: string, columnNames: string[]) => Promise<number>,
     patchBoard: (boardId: number, name: string, deletedColumnIds: number[], updatedColumnNames: InputColumn[]) => Promise<void>,
-    populateMe: () => Promise<void>,
+    populateMe: () => Promise<number[]>,
     setIsMenuOpen: (isOpen: boolean) => void,
 }
 
@@ -178,17 +178,18 @@ export const useBoardStore = create<BoardState & BoardAction>()((set, get) => ({
         }));
     },
     populateMe: async () => {
-        try {
-            const {data} = await client.mutate({
-                mutation: POPULATE_ME, variables: {
-                    input: {
-                        name: ""
-                    }
-                },
-            });
-        } catch (e) {
-            console.log(JSON.stringify(e, null, 2))
-        }
+        const {data} = await client.mutate({
+            mutation: POPULATE_ME,
+        });
+
+        const boards = data.populateMe.boards;
+
+        set((state) => ({
+            boardIds: boards.map((b: Board): BoardInfoData => {
+                return {id: b.id, name: b.name}
+            })
+        }));
+        return boards.map((b: Board) => b.id);
     },
     addBoard: async (name: string, columnNames: string[]) => {
         const {data} = await client.mutate({

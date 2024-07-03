@@ -94,10 +94,11 @@ export const PATCH_BOARD = gql`
 `;
 
 export const POPULATE_ME = gql`
-    mutation PopulateMe($input: AddBoardInput!) {
-        populateMe(input: $input) {
-            board {
+    mutation PopulateMe {
+        populateMe {
+            boards {
                 id
+                name
             }
         }
     }
