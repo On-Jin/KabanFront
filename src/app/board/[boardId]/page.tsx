@@ -1,6 +1,6 @@
 ﻿'use client'
 import React, {useEffect, useState,} from "react";
-import {usePathname, useSearchParams} from "next/navigation";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useParams} from 'next/navigation';
 import {useBoardStore} from "@/hooks/useStore";
 import BoardComponent from "@/components/BoardComponent";
@@ -13,7 +13,6 @@ export default function BoardPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchBoard = useBoardStore((state) => state.fetchBoard);
-
 
     useEffect(() => {
         fetchBoard(parseInt(params!.boardId as string)).then(() => {

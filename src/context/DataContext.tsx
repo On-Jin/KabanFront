@@ -2,6 +2,7 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
 import {ApolloProvider} from "@apollo/client";
 import createApolloClient from "@/lib/ApolloClient";
+import {useBoardStore} from "@/hooks/useStore";
 
 interface DataContextType {
     data: any;
@@ -21,6 +22,7 @@ let client = createApolloClient();
 export const DataProvider = ({children}: DataProviderProps) => {
     const [data, setData] = useState<any>();
     const [loading, setLoading] = useState<boolean>(true);
+    const fetchIds = useBoardStore((state) => state.fetchIds);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,6 +30,7 @@ export const DataProvider = ({children}: DataProviderProps) => {
             const response = await fetch('/api/me');
             const result = await response.json();
             setData(result);
+            await fetchIds();
             setLoading(false);
             client = createApolloClient();
         };
