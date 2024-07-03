@@ -49,6 +49,7 @@ const KButton =
                 children,
                 buttonType = KButtonType.Primary,
                 buttonSize = KButtonSize.Large,
+                className,
                 ...rest
             },
             ref
@@ -63,7 +64,8 @@ const KButton =
                         px-8 rounded-full font-bold \
                         disabled:opacity-50 \
                         ${GetClassKButtonType(buttonType)} \
-                        ${GetClassKButtonSize(buttonSize)} `,
+                        ${GetClassKButtonSize(buttonSize)} \
+                        ${className}`,
                         {}
                     )}
                 >

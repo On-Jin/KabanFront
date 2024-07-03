@@ -19,6 +19,7 @@ import {createPortal} from "react-dom";
 import {useBoardStore} from "@/hooks/useStore";
 import KProcessing from "@/components/K/KProcessing";
 import clsx from "clsx";
+import KButton, {KButtonSize, KButtonType} from "@/components/K/KButton";
 
 const BoardComponent = React.memo(() => {
         const moveMainTask = useBoardStore((state) => state.moveMainTask);
@@ -230,44 +231,64 @@ const BoardComponent = React.memo(() => {
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
                 >
-                    <div className="flex flex-col w-full h-full grow">
-                        <div className="flex gap-x-6 pb-8 h-max w-max grow">
-                            <SortableContext
-                                items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
-                                strategy={horizontalListSortingStrategy}
+                    {board.columns.length == 0 &&
+                        <div className="flex-col content-center h-full mb-4 md:mb-6 space-y-6">
+                            <p className="text-center px-6 text-k-medium-grey heading-l">This board is empty. Create a new
+                                column to get started.</p>
+                            <KButton
+                                className="w-fit mx-auto"
+                                disabled={isProcessAddColumn}
+                                onClick={addNewColumn}
+                                buttonSize={KButtonSize.Large}
+                                buttonType={KButtonType.Primary}
                             >
-                                {
-                                    board.columns.map(c =>
-                                        <ColumnComponent
-                                            key={c.id} column={c}
-                                            mainTaskListIds={c.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
-                                            isDragElement={false}
-                                        />)
-                                }
-                            </SortableContext>
-                            <div
-                                className="w-[280px] flex flex-col"
-                            >
-                                <div>
-                                    <p className="pb-6 heading-s text-transparent">
-                                        Add column
-                                    </p>
-                                </div>
-                                <div
-                                    className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] dark:from-[#2e2e38] dark:to-[#393946]
-                                                flex items-center justify-center rounded-lg">
-                                    <button
-                                        className={clsx("heading-xl text-k-medium-grey hover:enabled:text-k-purple", {
-                                            "pointer-events-none": isProcessAddColumn
-                                        })}
-                                        onClick={addNewColumn}
+                                {isProcessAddColumn ? <KProcessing/> : '+ Add New Column'}
+                            </KButton>
+                        </div>}
+                    {board.columns.length > 0 &&
+                        <>
+                            <div className="flex flex-col w-full h-full grow">
+                                <div className="flex gap-x-6 pb-8 h-max w-max grow">
+
+
+                                    <SortableContext
+                                        items={board.columns.map(c => `${DND_COLUMN_PREFIX}${c.id}`)}
+                                        strategy={horizontalListSortingStrategy}
                                     >
-                                        {isProcessAddColumn ? <KProcessing/> : '+ New Column'}
-                                    </button>
+                                        {
+                                            board.columns.map(c =>
+                                                <ColumnComponent
+                                                    key={c.id} column={c}
+                                                    mainTaskListIds={c.mainTasks.map(m => `${DND_MAINTASK_PREFIX}${m.id}`)}
+                                                    isDragElement={false}
+                                                />)
+                                        }
+                                    </SortableContext>
+                                    <div
+                                        className="w-[280px] flex flex-col"
+                                    >
+                                        <div>
+                                            <p className="pb-6 heading-s text-transparent">
+                                                Add column
+                                            </p>
+                                        </div>
+                                        <div
+                                            className="grow bg-gradient-to-r from-[#E9EFFAFF] to-[#E9EFFA80] dark:from-[#2e2e38] dark:to-[#393946]
+                                                flex items-center justify-center rounded-lg">
+                                            <button
+                                                className={clsx("heading-xl text-k-medium-grey hover:enabled:text-k-purple", {
+                                                    "pointer-events-none": isProcessAddColumn
+                                                })}
+                                                onClick={addNewColumn}
+                                            >
+                                                {isProcessAddColumn ? <KProcessing/> : '+ New Column'}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </>
+                    }
                     {createPortal(
                         <DragOverlay>
                             {dragElement}
