@@ -5,6 +5,7 @@ import {DataProvider} from "@/context/DataContext";
 import WaitMe from "@/shared/WaitMe";
 import React from "react";
 import ModalHandler from "@/components/Modals/ModalHandler";
+import {ErrorBoundary} from "next/dist/client/components/error-boundary";
 
 const inter = Plus_Jakarta_Sans({subsets: ["latin"]});
 
@@ -26,9 +27,7 @@ export default function RootLayout({
         <div className="">
             <DataProvider>
                 <WaitMe>
-                    <>
-                        {children}
-                    </>
+                    {children}
                 </WaitMe>
             </DataProvider>
         </div>
