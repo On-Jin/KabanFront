@@ -23,7 +23,7 @@ let authLink: ApolloLink;
 const refreshAuthLink = () => {
     authLink = setContext((_, {headers}) => {
         const token = Cookies.get("kaban-cookie")
-        // const token = cookies().get("kaban-cookie");
+        // const token = cookies().get(".AspNetCore.Cookies");
         // console.log(Cookies.get());
         // console.log(token);
         // console.log("_____");
