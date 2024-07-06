@@ -1,4 +1,4 @@
-﻿// 'use client';
+﻿'use client';
 import Image from "next/image";
 import iconAddTaskMobile from '/public/icon-add-task-mobile.svg';
 import {useData} from "@/context/DataContext";
