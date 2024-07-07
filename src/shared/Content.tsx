@@ -16,7 +16,7 @@ export default function Content({children}: { children: React.ReactNode }) {
     const {addRef} = useClickOutside<HTMLElement>(setIsMenuOpen, () => !isDesktop);
 
     return (
-        <div className="flex flex-col min-h-screen max-h-screen">
+        <div className="relative flex flex-col min-h-screen max-h-screen">
             {!isDesktop && <NavBar
                 addRef={addRef}
                 switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
@@ -26,7 +26,7 @@ export default function Content({children}: { children: React.ReactNode }) {
                 switchIsMenuOpen={() => setIsMenuOpen(!isMenuOpen)}
                 isMenuOpen={isMenuOpen}/>}
 
-            <main className={clsx("relative flex-grow flex overflow-hidden")}>
+            <div className={clsx("flex-grow flex overflow-hidden")}>
                 <CSSTransition
                     in={isMenuOpen}
                     timeout={400}
@@ -53,7 +53,7 @@ export default function Content({children}: { children: React.ReactNode }) {
                 </CSSTransition>
                 <menu
                     className={clsx(
-                        " hidden md:block md:absolute z-30 overflow-hidden transition-transform shrink-0 top-[-1px] bottom-0 left-0" +
+                        " hidden md:block md:absolute z-30 overflow-hidden transition-transform shrink-0 md:top-[80px] lg:top-[88px] bottom-0 left-0" +
                         " md:w-[260px] lg:w-[300px]" +
                         " bg-white dark:bg-k-dark-grey", {
                             "-translate-x-full": !isMenuOpen,
@@ -67,17 +67,16 @@ export default function Content({children}: { children: React.ReactNode }) {
                 >
                     <ReactSVG src="/icon-show-sidebar.svg"/>
                 </button>
-                {/*}*/}
 
                 <div id="fake" className={clsx("hidden md:block bg-transparent transition-all shrink-0", {
                     "w-0": !isMenuOpen,
                     "md:w-[260px] lg:w-[300px]": isMenuOpen,
                 })}>
                 </div>
-                <div className="overflow-auto flex flex-grow">
+                <main className="overflow-auto flex flex-grow">
                     {children}
-                </div>
-            </main>
+                </main>
+            </div>
 
         </div>
     );
