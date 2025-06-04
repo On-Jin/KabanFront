@@ -53,7 +53,7 @@ export default function NavBarDesktop(props: Props) {
                     <li>
                         {avatar && avatar}
                         {!avatar &&
-                            <a href={process.env.NODE_ENV == "development" ? `/api/discord-login` : `https://api.kaban.ntoniolo.wtf/discord-login`}>
+                            <a href={process.env.NODE_ENV == "development" ? `/api/discord-login` : `https://api.kaban.ntoniolo.com/discord-login`}>
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      className="w-10 " viewBox="0 -28.5 256 256" version="1.1"
                                      preserveAspectRatio="xMidYMid">
