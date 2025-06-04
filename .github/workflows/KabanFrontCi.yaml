@@ -2,6 +2,7 @@
   push:
     branches:
       - main
+  workflow_dispatch:
 name: 'KabanFrontCi'
 
 jobs:
